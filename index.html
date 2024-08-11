@@ -1,24 +1,38 @@
-function checkLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            var lat = position.coords.latitude;
-            var lon = position.coords.longitude;
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surprise pour Julie</title>
+</head>
+<body>
+    <h1>Bienvenue à Trouville-sur-Mer, Julie !</h1>
+    <div id="password-protected">
+        <p>Pour déverrouiller la surprise, entre le mot de passe :</p>
+        <input type="password" id="password-input" placeholder="Mot de passe">
+        <button onclick="checkPassword()">Déverrouiller</button>
+    </div>
+    <div id="hidden-content" style="display:none;">
+        <p>Surprise ! Voici le podcast spécial que j'ai créé pour toi.</p>
+        <!-- Ajoute ton lecteur audio ici -->
+        <audio controls>
+            <source src="URL_DE_TON_FICHIER_AUDIO" type="audio/mpeg">
+            Votre navigateur ne supporte pas la lecture audio.
+        </audio>
+    </div>
 
-            // Coordonnées approximatives de Trouville-sur-Mer
-            var trouvilleLat = 49.3667;
-            var trouvilleLon = 0.0833;
+    <script>
+        function checkPassword() {
+            var input = document.getElementById("password-input").value;
+            var correctPassword = "CAPDES3ANS";
 
-            // Tolérance de distance réduite
-            var tolerance = 0.05;
-
-            if (Math.abs(lat - trouvilleLat) <= tolerance && Math.abs(lon - trouvilleLon) <= tolerance) {
+            if (input === correctPassword) {
                 document.getElementById("hidden-content").style.display = "block";
+                document.getElementById("password-protected").style.display = "none";
             } else {
-                alert("Cette page est actuellement inaccessible. Revenez plus tard.");
+                alert("Mot de passe incorrect. Réessayez.");
             }
-        });
-    } else {
-        alert("La géolocalisation n'est pas supportée par ce navigateur.");
-    }
-}
-
+        }
+    </script>
+</body>
+</html>
