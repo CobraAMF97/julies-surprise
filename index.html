@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surprise pour Julie</title>
+</head>
+<body>
+    <h1>Bienvenue à Trouville-sur-Mer, Julie !</h1>
+    <div id="hidden-content" style="display:none;">
+        <p>Surprise ! Voici le podcast spécial que j'ai créé pour toi.</p>
+        <!-- Ici, tu mettras ton lecteur audio -->
+    </div>
+    <script>
+        function checkLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var lat = position.coords.latitude;
+                    var lon = position.coords.longitude;
+
+                    // Coordonnées approximatives de Trouville-sur-Mer
+                    var trouvilleLat = 49.3667;
+                    var trouvilleLon = 0.0833;
+
+                    // Tolérance de distance (environ 10 km)
+                    var tolerance = 0.1;
+
+                    if (Math.abs(lat - trouvilleLat) <= tolerance && Math.abs(lon - trouvilleLon) <= tolerance) {
+                        document.getElementById("hidden-content").style.display = "block";
+                    } else {
+                        alert("Cette page est actuellement inaccessible. Revenez plus tard.");
+                    }
+                });
+            } else {
+                alert("La géolocalisation n'est pas supportée par ce navigateur.");
+            }
+        }
+
+        // Appel de la fonction de vérification au chargement de la page
+        window.onload = checkLocation;
+    </script>
+</body>
+</html>
