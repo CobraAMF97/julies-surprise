@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu Snake Simplifié</title>
+    <title>La Quête du Serpent Sage</title>
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: 'Georgia', serif;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -21,71 +20,30 @@
             background-color: #111;
             position: relative;
         }
+        #scoreboard {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-size: 24px;
+            z-index: 10;
+        }
         #errorMessage {
             color: white;
             font-size: 24px;
             text-align: center;
             display: none; /* Masqué par défaut */
         }
-        #score {
-            color: white;
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-        .control-buttons {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-        }
-        .row {
-            display: flex;
-        }
-        .control-button {
-            width: 60px;
-            height: 60px;
-            background-color: #333;
-            border: 2px solid #666;
-            color: white;
-            font-size: 24px;
-            line-height: 60px;
-            text-align: center;
-            margin: 5px;
-            cursor: pointer;
-        }
-        #up { border-radius: 50% 50% 0 0; }
-        #down { border-radius: 0 0 50% 50%; }
-        #left { border-radius: 50% 0 0 50%; }
-        #right { border-radius: 0 50% 50% 0; }
-        /* Cacher l'iframe */
-        #youtubePlayer {
-            position: absolute;
-            top: -9999px;
-            left: -9999px;
-        }
     </style>
 </head>
 <body>
 
-<div id="score">Score: 0</div>
+<!-- Musique de fond depuis YouTube -->
+<iframe id="background-music" width="0" height="0" src="https://www.youtube.com/embed/IFW3O-PsRUo?autoplay=1&loop=1&playlist=IFW3O-PsRUo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
 <canvas id="gameCanvas"></canvas>
+<div id="scoreboard">Score: <span id="score">0</span></div>
 <div id="errorMessage">Cette page ne peut être ouverte que sur un appareil mobile.</div>
-
-<div class="control-buttons">
-    <div class="row">
-        <div id="left" class="control-button">←</div>
-        <div id="right" class="control-button">→</div>
-    </div>
-    <div class="row">
-        <div id="up" class="control-button">↑</div>
-    </div>
-    <div class="row">
-        <div id="down" class="control-button">↓</div>
-    </div>
-</div>
-
-<!-- Intégration de la vidéo YouTube pour la musique de fond -->
-<iframe id="youtubePlayer" src="https://www.youtube.com/embed/IFW3O-PsRUo?autoplay=1&loop=1&playlist=IFW3O-PsRUo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 <script>
     function isMobileDevice() {
@@ -97,6 +55,9 @@
         document.getElementById('gameCanvas').style.display = 'none';
         document.getElementById('errorMessage').style.display = 'block';
     } else {
+        // Introduction à l'histoire
+        alert("Il était une fois, dans une forêt enchantée, un serpent sage qui gardait un secret précieux : le mot de passe d'un trésor caché. Mais ce mot de passe ne pouvait être révélé qu'à une âme courageuse qui réussirait une épreuve difficile. Guide le serpent et récolte les fruits magiques pour découvrir le mot de passe secret.");
+
         // Code du jeu Snake
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -107,7 +68,6 @@
         let gameInterval;
         let score = 0;
         const maxScore = 2001;  // Score à atteindre pour gagner
-        let directionChangeAllowed = true; // Pour éviter les changements de direction rapides
 
         canvas.width = boxSize * 20;
         canvas.height = boxSize * 20;
@@ -131,8 +91,17 @@
 
             if (newHead.x === food.x && newHead.y === food.y) {
                 food = {x: boxSize * Math.floor(Math.random() * 15), y: boxSize * Math.floor(Math.random() * 15)};
-                updateScore();  // Met à jour le score et affiche les messages de l'histoire
-                document.getElementById('winSound').play(); // Jouer le son de victoire
+                score += 100;  // Ajouter 100 points au score
+                document.getElementById('score').innerText = score;
+
+                // Affichage des messages de l'histoire
+                showStoryMessage();
+
+                // Vérification de la condition de victoire
+                if (score >= maxScore) {
+                    clearInterval(gameInterval);
+                    alert("Félicitations, Julie ! Le serpent sait maintenant que tu es digne de connaître le mot de passe. Le voici : CAPDES3ANS. Utilise-le pour découvrir le trésor caché.");
+                }
             } else {
                 snake.pop();
             }
@@ -155,8 +124,7 @@
             moveSnake();
             if (checkCollision()) {
                 clearInterval(gameInterval);
-                document.getElementById('gameOverSound').play(); // Jouer le son de game over
-                showGameOverMessage();
+                alert('Game Over');
             }
         }
 
@@ -171,6 +139,7 @@
             draw();
         }
 
+        // Fonction pour afficher les messages de l'histoire en fonction du score
         function showStoryMessage() {
             if (score === 500) {
                 alert("Le serpent commence à se sentir plus confiant. Tu es sur la bonne voie, mais le chemin est encore long...");
@@ -178,82 +147,25 @@
                 alert("Le serpent s'émerveille de ta ténacité. Il sait que tu es proche du secret, mais il faut encore plus d'efforts.");
             } else if (score === 1500) {
                 alert("Le serpent est impressionné ! Très peu sont allés aussi loin. Le secret n'est plus qu'à portée de main...");
-            } else if (score >= maxScore) {
-                clearInterval(gameInterval);
-                alert("Félicitations, Julie ! Le serpent sait maintenant que tu es digne de connaître le mot de passe. Le voici : CAPDES3ANS. Utilise-le pour découvrir le trésor caché.");
             }
         }
 
-        function updateScore() {
-            score += 100;  // Ajouter 100 points au score
-            document.getElementById('score').innerText = 'Score: ' + score;
-            showStoryMessage();
-        }
-
-        function showGameOverMessage() {
-            const messages = [
-                "Game Over ! Le serpent est devenu trop gourmand et a fini par se mordre la queue. Essaie encore !",
-                "Oh non ! Le serpent a oublié qu'il n'était pas un serpent à sonnette. Il s'est pris dans ses propres anneaux !",
-                "C'est la fin du jeu ! Le serpent a eu un coup de mou et a décidé de faire une sieste. Reviens bientôt !",
-                "Le serpent a rencontré un mur et a décidé que c'était le moment idéal pour une pause café. Game Over !"
-            ];
-            const randomIndex = Math.floor(Math.random() * messages.length);
-            alert(messages[randomIndex]);
-        }
-
-        // Gestion des boutons de direction avec un délai minimum entre les changements de direction
-        function changeDirection(newDirection) {
-            if (directionChangeAllowed) {
-                if (direction.x !== -newDirection.x && direction.y !== -newDirection.y) {
-                    direction = newDirection;
-                    directionChangeAllowed = false;
-                    setTimeout(() => {
-                        directionChangeAllowed = true;
-                    }, 150); // Délai pour éviter les changements rapides
-                }
-            }
-        }
-
-        document.getElementById('up').addEventListener('click', () => changeDirection({x: 0, y: -boxSize}));
-        document.getElementById('down').addEventListener('click', () => changeDirection({x: 0, y: boxSize}));
-        document.getElementById('left').addEventListener('click', () => changeDirection({x: -boxSize, y: 0}));
-        document.getElementById('right').addEventListener('click', () => changeDirection({x: boxSize, y: 0}));
-
-        // Initialiser les sons
-        function initializeAudio() {
-            const bgMusic = document.getElementById('backgroundMusic');
-            const winSound = document.getElementById('winSound');
-            const gameOverSound = document.getElementById('gameOverSound');
-
-            bgMusic.addEventListener('canplaythrough', () => {
-                bgMusic.volume = 0.5; // Ajuster le volume de la musique de fond
-            });
-
-            bgMusic.addEventListener('error', (e) => {
-                console.error('Erreur de chargement de la musique de fond:', e);
-            });
-
-            winSound.addEventListener('canplaythrough', () => {
-                console.log('Son de victoire prêt.');
-            });
-
-            winSound.addEventListener('error', (e) => {
-                console.error('Erreur de chargement du son de victoire:', e);
-            });
-
-            gameOverSound.addEventListener('canplaythrough', () => {
-                console.log('Son de game over prêt.');
-            });
-
-            gameOverSound.addEventListener('error', (e) => {
-                console.error('Erreur de chargement du son de game over:', e);
-            });
-        }
-
-        initializeAudio();
-
-        // Ralentir le serpent en augmentant l'intervalle du jeu
+        // Lancer le jeu
         gameInterval = setInterval(gameLoop, 150);
+
+        canvas.addEventListener('touchstart', (event) => {
+            const touch = event.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const touchX = touch.clientX - rect.left;
+            const touchY = touch.clientY - rect.top;
+
+            const head = snake[0];
+            if (Math.abs(touchX - head.x) > Math.abs(touchY - head.y)) {
+                direction = {x: touchX > head.x ? boxSize : -boxSize, y: 0};
+            } else {
+                direction = {x: 0, y: touchY > head.y ? boxSize : -boxSize};
+            }
+        });
     }
 </script>
 
