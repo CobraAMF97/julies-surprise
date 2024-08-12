@@ -10,6 +10,7 @@
             padding: 0;
             font-family: 'Georgia', serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -26,10 +27,16 @@
             text-align: center;
             display: none; /* Masqué par défaut */
         }
+        #score {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
 
+<div id="score">Score: 0</div>
 <canvas id="gameCanvas"></canvas>
 <div id="errorMessage">Cette page ne peut être ouverte que sur un appareil mobile.</div>
 
@@ -76,14 +83,7 @@
 
             if (newHead.x === food.x && newHead.y === food.y) {
                 food = {x: boxSize * Math.floor(Math.random() * 15), y: boxSize * Math.floor(Math.random() * 15)};
-                score += 100;  // Ajouter 100 points au score
-                document.getElementById('score').innerText = score;
-
-                // Vérification de la condition de victoire
-                if (score >= maxScore) {
-                    clearInterval(gameInterval);
-                    alert('Félicitations ! Vous avez gagné !');
-                }
+                updateScore();  // Met à jour le score et affiche les messages de l'histoire
             } else {
                 snake.pop();
             }
@@ -121,24 +121,9 @@
             draw();
         }
 
-        // Ralentir le serpent en augmentant l'intervalle du jeu
-        gameInterval = setInterval(gameLoop, 150);
+        function showStoryMessage() {
+            if (score === 500) {
+                alert("Le serpent commence à se sentir plus confiant. Tu es sur la bonne voie, mais le chemin est encore long...");
+            } else if (score === 1000) {
+                alert("Le serpent s'émerveille de ta 
 
-        canvas.addEventListener('touchstart', (event) => {
-            const touch = event.touches[0];
-            const rect = canvas.getBoundingClientRect();
-            const touchX = touch.clientX - rect.left;
-            const touchY = touch.clientY - rect.top;
-
-            const head = snake[0];
-            if (Math.abs(touchX - head.x) > Math.abs(touchY - head.y)) {
-                direction = {x: touchX > head.x ? boxSize : -boxSize, y: 0};
-            } else {
-                direction = {x: 0, y: touchY > head.y ? boxSize : -boxSize};
-            }
-        });
-    }
-</script>
-
-</body>
-</html>
