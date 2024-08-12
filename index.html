@@ -102,12 +102,24 @@
     }
 
     function createObstacle() {
-        let height = Math.floor(Math.random() * (canvas.height - 200)) + 50;
+        let gapHeight = 200; // Hauteur de l'écart entre les obstacles
+        let topHeight = Math.floor(Math.random() * (canvas.height - gapHeight));
+        let bottomHeight = canvas.height - (topHeight + gapHeight);
+
+        // Créer le corail supérieur
         obstacles.push({
             x: canvas.width,
-            y: height,
+            y: 0,
             width: 50,
-            height: 200
+            height: topHeight
+        });
+
+        // Créer le corail inférieur
+        obstacles.push({
+            x: canvas.width,
+            y: canvas.height - bottomHeight,
+            width: 50,
+            height: bottomHeight
         });
     }
 
@@ -118,6 +130,7 @@
         score = 0;
         frame = 0;
         gameOver = false;
+        gameLoop(); // Redémarre la boucle de jeu
     }
 
     function gameLoop() {
