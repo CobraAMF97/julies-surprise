@@ -17,20 +17,8 @@
             overflow: hidden;
         }
         #gameCanvas {
-            background-color: #111;
+            background-color: #222;
             position: relative;
-        }
-        .snake {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background-color: green;
-        }
-        .food {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background-color: red;
         }
     </style>
 </head>
@@ -47,20 +35,25 @@
     let food = {x: boxSize * Math.floor(Math.random() * 15), y: boxSize * Math.floor(Math.random() * 15)};
     let gameInterval;
 
+    // Charger les images pour le serpent et la nourriture
+    const snakeImage = new Image();
+    snakeImage.src = 'https://img.icons8.com/emoji/48/000000/snake.png';
+    const foodImage = new Image();
+    foodImage.src = 'https://img.icons8.com/color/48/000000/apple.png';
+
     canvas.width = boxSize * 20;
     canvas.height = boxSize * 20;
 
-    function drawBox(x, y, color) {
-        ctx.fillStyle = color;
-        ctx.fillRect(x, y, boxSize, boxSize);
+    function drawBox(x, y, img) {
+        ctx.drawImage(img, x, y, boxSize, boxSize);
     }
 
     function drawSnake() {
-        snake.forEach(segment => drawBox(segment.x, segment.y, 'green'));
+        snake.forEach(segment => drawBox(segment.x, segment.y, snakeImage));
     }
 
     function drawFood() {
-        drawBox(food.x, food.y, 'red');
+        drawBox(food.x, food.y, foodImage);
     }
 
     function moveSnake() {
@@ -106,7 +99,8 @@
         draw();
     }
 
-    gameInterval = setInterval(gameLoop, 100);
+    // Ralentir le serpent en augmentant l'intervalle du jeu
+    gameInterval = setInterval(gameLoop, 150);
 
     canvas.addEventListener('touchstart', (event) => {
         const touch = event.touches[0];
@@ -125,3 +119,4 @@
 
 </body>
 </html>
+
