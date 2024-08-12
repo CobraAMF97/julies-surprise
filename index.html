@@ -4,35 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Surprise pour Julie</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        #password-protected {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        input[type="password"] {
+            width: 80%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #ff6f61;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ff3b30;
+        }
+
+        #hidden-content {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            color: #333;
+        }
+
+        audio {
+            margin-top: 20px;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-    <h1>Bienvenue à Trouville-sur-Mer, Julie !</h1>
     <div id="password-protected">
+        <h1>Bienvenue à Trouville-sur-Mer, Julie !</h1>
         <p>Pour déverrouiller la surprise, entre le mot de passe :</p>
         <input type="password" id="password-input" placeholder="Mot de passe">
-        <button onclick="checkPassword()">Déverrouiller</button>
-    </div>
-    <div id="hidden-content" style="display:none;">
-        <p>Surprise ! Voici le podcast spécial que j'ai créé pour toi.</p>
-        <!-- Ajoute ton lecteur audio ici -->
-        <audio controls>
-            <source src="URL_DE_TON_FICHIER_AUDIO" type="audio/mpeg">
-            Votre navigateur ne supporte pas la lecture audio.
-        </audio>
-    </div>
-
-    <script>
-        function checkPassword() {
-            var input = document.getElementById("password-input").value;
-            var correctPassword = "CAPDES3ANS";
-
-            if (input === correctPassword) {
-                document.getElementById("hidden-content").style.display = "block";
-                document.getElementById("password-protected").style.display = "none";
-            } else {
-                alert("Mot de passe incorrect. Réessayez.");
-            }
-        }
-    </script>
-</body>
-</html>
+        <button onclick="checkPassword()">Déverrouiller</
