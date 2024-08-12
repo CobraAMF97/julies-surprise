@@ -106,7 +106,7 @@
             moveSnake();
             if (checkCollision()) {
                 clearInterval(gameInterval);
-                alert('Game Over');
+                showGameOverMessage();
             }
         }
 
@@ -125,5 +125,50 @@
             if (score === 500) {
                 alert("Le serpent commence à se sentir plus confiant. Tu es sur la bonne voie, mais le chemin est encore long...");
             } else if (score === 1000) {
-                alert("Le serpent s'émerveille de ta 
+                alert("Le serpent s'émerveille de ta ténacité. Il sait que tu es proche du secret, mais il faut encore plus d'efforts.");
+            } else if (score === 1500) {
+                alert("Le serpent est impressionné ! Très peu sont allés aussi loin. Le secret n'est plus qu'à portée de main...");
+            } else if (score >= maxScore) {
+                clearInterval(gameInterval);
+                alert("Félicitations, Julie ! Le serpent sait maintenant que tu es digne de connaître le mot de passe. Le voici : CAPDES3ANS. Utilise-le pour découvrir le trésor caché.");
+            }
+        }
 
+        function updateScore() {
+            score += 100;  // Ajouter 100 points au score
+            document.getElementById('score').innerText = 'Score: ' + score;
+            showStoryMessage();
+        }
+
+        function showGameOverMessage() {
+            const messages = [
+                "Game Over ! Le serpent est devenu trop gourmand et a fini par se mordre la queue. Essaie encore !",
+                "Oh non ! Le serpent a oublié qu'il n'était pas un serpent à sonnette. Il s'est pris dans ses propres anneaux !",
+                "C'est la fin du jeu ! Le serpent a eu un coup de mou et a décidé de faire une sieste. Reviens bientôt !",
+                "Le serpent a rencontré un mur et a décidé que c'était le moment idéal pour une pause café. Game Over !"
+            ];
+            const randomIndex = Math.floor(Math.random() * messages.length);
+            alert(messages[randomIndex]);
+        }
+
+        // Ralentir le serpent en augmentant l'intervalle du jeu
+        gameInterval = setInterval(gameLoop, 150);
+
+        canvas.addEventListener('touchstart', (event) => {
+            const touch = event.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const touchX = touch.clientX - rect.left;
+            const touchY = touch.clientY - rect.top;
+
+            const head = snake[0];
+            if (Math.abs(touchX - head.x) > Math.abs(touchY - head.y)) {
+                direction = {x: touchX > head.x ? boxSize : -boxSize, y: 0};
+            } else {
+                direction = {x: 0, y: touchY > head.y ? boxSize : -boxSize};
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
