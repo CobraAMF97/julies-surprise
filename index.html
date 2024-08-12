@@ -34,7 +34,8 @@
         }
         .control-buttons {
             display: flex;
-            justify-content: center;
+            flex-wrap: wrap;
+            width: 180px; /* Ajustez la largeur selon vos besoins */
             margin-top: 20px;
         }
         .control-button {
@@ -88,6 +89,7 @@
         let gameInterval;
         let score = 0;
         const maxScore = 2001;  // Score à atteindre pour gagner
+        let directionChangeAllowed = true; // Pour éviter les changements de direction rapides
 
         canvas.width = boxSize * 20;
         canvas.height = boxSize * 20;
@@ -179,19 +181,23 @@
             alert(messages[randomIndex]);
         }
 
-        // Gestion des boutons de direction
-        document.getElementById('up').addEventListener('click', () => {
-            if (direction.y === 0) direction = {x: 0, y: -boxSize};
-        });
-        document.getElementById('down').addEventListener('click', () => {
-            if (direction.y === 0) direction = {x: 0, y: boxSize};
-        });
-        document.getElementById('left').addEventListener('click', () => {
-            if (direction.x === 0) direction = {x: -boxSize, y: 0};
-        });
-        document.getElementById('right').addEventListener('click', () => {
-            if (direction.x === 0) direction = {x: boxSize, y: 0};
-        });
+        // Gestion des boutons de direction avec un délai minimum entre les changements de direction
+        function changeDirection(newDirection) {
+            if (directionChangeAllowed) {
+                if (direction.x !== -newDirection.x && direction.y !== -newDirection.y) {
+                    direction = newDirection;
+                    directionChangeAllowed = false;
+                    setTimeout(() => {
+                        directionChangeAllowed = true;
+                    }, 150); // Délai pour éviter les changements rapides
+                }
+            }
+        }
+
+        document.getElementById('up').addEventListener('click', () => changeDirection({x: 0, y: -boxSize}));
+        document.getElementById('down').addEventListener('click', () => changeDirection({x: 0, y: boxSize}));
+        document.getElementById('left').addEventListener('click', () => changeDirection({x: -boxSize, y: 0}));
+        document.getElementById('right').addEventListener('click', () => changeDirection({x: boxSize, y: 0}));
 
         // Ralentir le serpent en augmentant l'intervalle du jeu
         gameInterval = setInterval(gameLoop, 150);
