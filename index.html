@@ -23,17 +23,32 @@
             text-align: center;
         }
 
-        p {
-            font-size: 1.2em;
-            margin-bottom: 20px;
-            text-align: center;
+        #game {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            border: 2px solid #ddd;
+            border-radius: 15px;
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
-        #password-protected {
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        .star {
+            width: 50px;
+            height: 50px;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Full_Star_Yellow.svg/1024px-Full_Star_Yellow.svg.png') no-repeat center;
+            background-size: contain;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        #password-container {
+            display: none;
+            margin-top: 30px;
             text-align: center;
         }
 
@@ -63,93 +78,51 @@
             background-color: #0056b3;
             transform: translateY(-3px);
         }
-
-        #hidden-content {
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            color: #333;
-            display: none;
-        }
-
-        audio {
-            margin-top: 20px;
-            width: 100%;
-        }
-
-        /* Animations */
-        .fade-out {
-            animation: fadeOut 0.5s forwards;
-        }
-
-        .fade-in {
-            animation: fadeIn 0.5s forwards, scaleIn 0.5s forwards;
-        }
-
-        .shake {
-            animation: shake 0.3s ease-in-out;
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes scaleIn {
-            from { transform: scale(0.9); }
-            to { transform: scale(1); }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            50% { transform: translateX(10px); }
-            75% { transform: translateX(-10px); }
-        }
     </style>
 </head>
 <body>
-    <div id="password-protected">
+    <div>
         <h1>Bienvenue à Trouville-sur-Mer, Julie !</h1>
-        <p>Pour déverrouiller la surprise, entre le mot de passe :</p>
-        <input type="password" id="password-input" placeholder="Mot de passe">
-        <button onclick="checkPassword()">Déverrouiller</button>
-    </div>
-    <div id="hidden-content">
-        <h1>Surprise !</h1>
-        <p>Voici le podcast spécial que j'ai créé pour toi.</p>
-        <audio controls>
-            <source src="URL_DE_TON_FICHIER_AUDIO" type="audio/mpeg">
-            Votre navigateur ne supporte pas la lecture audio.
-        </audio>
+        <p>Clique sur l'étoile correcte pour déverrouiller le mot de passe !</p>
+        <div id="game">
+            <!-- Étoiles générées par JavaScript -->
+        </div>
+        <div id="password-container">
+            <p>Vous avez trouvé l'étoile ! Entrez le mot de passe :</p>
+            <input type="password" id="password-input" placeholder="Mot de passe">
+            <button onclick="checkPassword()">Déverrouiller</button>
+        </div>
     </div>
 
     <script>
+        // Générer les étoiles
+        const gameContainer = document.getElementById('game');
+        const totalStars = 12;
+        const correctStarIndex = Math.floor(Math.random() * totalStars);
+
+        for (let i = 0; i < totalStars; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.onclick = function() {
+                if (i === correctStarIndex) {
+                    document.getElementById('game').style.display = 'none';
+                    document.getElementById('password-container').style.display = 'block';
+                } else {
+                    alert('Désolé, ce n\'est pas la bonne étoile. Réessayez !');
+                }
+            };
+            gameContainer.appendChild(star);
+        }
+
+        // Vérifier le mot de passe
         function checkPassword() {
             var input = document.getElementById("password-input").value;
             var correctPassword = "CAPDES3ANS";
-            var passwordBox = document.getElementById("password-protected");
-            var hiddenContent = document.getElementById("hidden-content");
 
             if (input === correctPassword) {
-                passwordBox.classList.add('fade-out');
-                setTimeout(function() {
-                    passwordBox.style.display = 'none';
-                    hiddenContent.style.display = 'block';
-                    hiddenContent.classList.add('fade-in');
-                }, 500);
+                alert("Mot de passe correct ! Le podcast est débloqué.");
+                // Ajoutez ici le code pour afficher le podcast
             } else {
-                passwordBox.classList.add('shake');
-                setTimeout(function() {
-                    passwordBox.classList.remove('shake');
-                }, 300);
                 alert("Mot de passe incorrect. Réessayez.");
             }
         }
