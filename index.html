@@ -74,4 +74,31 @@
         <h1>Bienvenue à Trouville-sur-Mer, Julie !</h1>
         <p>Pour déverrouiller la surprise, entre le mot de passe :</p>
         <input type="password" id="password-input" placeholder="Mot de passe">
-        <button onclick="checkPassword()">Déverrouiller</
+        <button onclick="checkPassword()">Déverrouiller</button>
+    </div>
+    <div id="hidden-content" style="display:none;">
+        <h1>Surprise !</h1>
+        <p>Voici le podcast spécial que j'ai créé pour toi.</p>
+        <!-- Ajoute ton lecteur audio ici -->
+        <audio controls>
+            <source src="URL_DE_TON_FICHIER_AUDIO" type="audio/mpeg">
+            Votre navigateur ne supporte pas la lecture audio.
+        </audio>
+    </div>
+
+    <script>
+        function checkPassword() {
+            var input = document.getElementById("password-input").value;
+            var correctPassword = "CAPDES3ANS";
+
+            if (input === correctPassword) {
+                document.getElementById("hidden-content").style.display = "block";
+                document.getElementById("password-protected").style.display = "none";
+            } else {
+                alert("Mot de passe incorrect. Réessayez.");
+            }
+        }
+    </script>
+</body>
+</html>
+
