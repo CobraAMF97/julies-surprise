@@ -114,6 +114,9 @@
                 score += 100;
                 document.getElementById('score').innerText = score;
 
+                // Déplacer l'obstacle rouge de manière aléatoire
+                obstacle = {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)};
+
                 showStoryMessage();
 
                 if (score >= maxScore) {
