@@ -32,6 +32,27 @@
             font-size: 24px;
             margin-bottom: 20px;
         }
+        .control-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .control-button {
+            width: 60px;
+            height: 60px;
+            background-color: #333;
+            border: 2px solid #666;
+            color: white;
+            font-size: 24px;
+            line-height: 60px;
+            text-align: center;
+            margin: 5px;
+            cursor: pointer;
+        }
+        #up { border-radius: 50% 50% 0 0; }
+        #down { border-radius: 0 0 50% 50%; }
+        #left { border-radius: 50% 0 0 50%; }
+        #right { border-radius: 0 50% 50% 0; }
     </style>
 </head>
 <body>
@@ -39,6 +60,13 @@
 <div id="score">Score: 0</div>
 <canvas id="gameCanvas"></canvas>
 <div id="errorMessage">Cette page ne peut être ouverte que sur un appareil mobile.</div>
+
+<div class="control-buttons">
+    <div id="up" class="control-button">↑</div>
+    <div id="left" class="control-button">←</div>
+    <div id="right" class="control-button">→</div>
+    <div id="down" class="control-button">↓</div>
+</div>
 
 <script>
     function isMobileDevice() {
@@ -151,22 +179,22 @@
             alert(messages[randomIndex]);
         }
 
+        // Gestion des boutons de direction
+        document.getElementById('up').addEventListener('click', () => {
+            if (direction.y === 0) direction = {x: 0, y: -boxSize};
+        });
+        document.getElementById('down').addEventListener('click', () => {
+            if (direction.y === 0) direction = {x: 0, y: boxSize};
+        });
+        document.getElementById('left').addEventListener('click', () => {
+            if (direction.x === 0) direction = {x: -boxSize, y: 0};
+        });
+        document.getElementById('right').addEventListener('click', () => {
+            if (direction.x === 0) direction = {x: boxSize, y: 0};
+        });
+
         // Ralentir le serpent en augmentant l'intervalle du jeu
         gameInterval = setInterval(gameLoop, 150);
-
-        canvas.addEventListener('touchstart', (event) => {
-            const touch = event.touches[0];
-            const rect = canvas.getBoundingClientRect();
-            const touchX = touch.clientX - rect.left;
-            const touchY = touch.clientY - rect.top;
-
-            const head = snake[0];
-            if (Math.abs(touchX - head.x) > Math.abs(touchY - head.y)) {
-                direction = {x: touchX > head.x ? boxSize : -boxSize, y: 0};
-            } else {
-                direction = {x: 0, y: touchY > head.y ? boxSize : -boxSize};
-            }
-        });
     }
 </script>
 
