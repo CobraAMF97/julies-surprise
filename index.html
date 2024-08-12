@@ -69,7 +69,13 @@
     const scoreboard = document.getElementById('score');
     const gameOverDisplay = document.getElementById('gameOver');
     let score = 0;
-    let fruits = ['🍎', '🍌', '🍒', '🍇', '🍉'];
+    let fruits = [
+        'https://img.icons8.com/color/96/000000/apple.png',
+        'https://img.icons8.com/color/96/000000/banana.png',
+        'https://img.icons8.com/color/96/000000/cherry.png',
+        'https://img.icons8.com/color/96/000000/grapes.png',
+        'https://img.icons8.com/color/96/000000/watermelon.png'
+    ];
     let gameInterval;
     let gameOver = false;
 
@@ -85,7 +91,7 @@
         const fruitElement = document.createElement('div');
         fruitElement.classList.add('fruit');
         const fruitType = fruits[Math.floor(Math.random() * fruits.length)];
-        fruitElement.textContent = fruitType;
+        fruitElement.style.backgroundImage = `url(${fruitType})`;
 
         const { x, y } = getRandomPosition();
         fruitElement.style.left = `${x}px`;
