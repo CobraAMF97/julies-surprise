@@ -3,130 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fruit Ninja Simplifié</title>
+    <title>Jeu Snake Tactile</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            overflow: hidden;
             font-family: 'Georgia', serif;
-            background-color: #87CEEB;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            background-color: #000;
+            overflow: hidden;
         }
-
         #gameCanvas {
-            width: 100%;
-            height: 100%;
+            background-color: #111;
             position: relative;
-            background-color: #87CEEB;
         }
-
-        .fruit {
+        .snake {
             position: absolute;
-            width: 60px;
-            height: 60px;
+            width: 20px;
+            height: 20px;
+            background-color: green;
+        }
+        .food {
+            position: absolute;
+            width: 20px;
+            height: 20px;
             background-color: red;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        #scoreboard {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 24px;
-            color: white;
-            z-index: 10;
-        }
-
-        #gameOver {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 36px;
-            color: white;
-            text-align: center;
-            z-index: 10;
         }
     </style>
 </head>
 <body>
 
-<div id="gameCanvas">
-    <div id="scoreboard">Score: <span id="score">0</span></div>
-    <div id="gameOver">
-        <p>Game Over!</p>
-        <p>Cliquez pour recommencer</p>
-    </div>
-</div>
+<canvas id="gameCanvas"></canvas>
 
 <script>
     const canvas = document.getElementById('gameCanvas');
-    const scoreboard = document.getElementById('score');
-    const gameOverDisplay = document.getElementById('gameOver');
-    let score = 0;
+    const ctx = canvas.getContext('2d');
+    const boxSize = 20;
+    let snake = [{x: boxSize * 5, y: boxSize * 5}];
+    let direction = {x: boxSize, y: 0};
+    let food = {x: boxSize * Math.floor(Math.random() * 15), y: boxSize * Math.floor(Math.random() * 15)};
     let gameInterval;
-    let gameOver = false;
 
-    function getRandomPosition() {
-        const x = Math.random() * (canvas.clientWidth - 60);
-        const y = Math.random() * (canvas.clientHeight - 60);
-        return { x, y };
+    canvas.width = boxSize * 20;
+    canvas.height = boxSize * 20;
+
+    function drawBox(x, y, color) {
+        ctx.fillStyle = color;
+        ctx.fillRect(x, y, boxSize, boxSize);
     }
 
-    function createFruit() {
-        if (gameOver) return;
+    function drawSnake() {
+        snake.forEach(segment => drawBox(segment.x, segment.y, 'green'));
+    }
 
-        const fruitElement = document.createElement('div');
-        fruitElement.classList.add('fruit');
+    function drawFood() {
+        drawBox(food.x, food.y, 'red');
+    }
 
-        const { x, y } = getRandomPosition();
-        fruitElement.style.left = `${x}px`;
-        fruitElement.style.top = `${y}px`;
+    function moveSnake() {
+        const newHead = {x: snake[0].x + direction.x, y: snake[0].y + direction.y};
+        snake.unshift(newHead);
 
-        canvas.appendChild(fruitElement);
+        if (newHead.x === food.x && newHead.y === food.y) {
+            food = {x: boxSize * Math.floor(Math.random() * 15), y: boxSize * Math.floor(Math.random() * 15)};
+        } else {
+            snake.pop();
+        }
+    }
 
-        fruitElement.addEventListener('click', sliceFruit);
-
-        setTimeout(() => {
-            if (!gameOver) {
-                fruitElement.remove();
+    function checkCollision() {
+        const head = snake[0];
+        if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
+            return true;
+        }
+        for (let i = 1; i < snake.length; i++) {
+            if (head.x === snake[i].x && head.y === snake[i].y) {
+                return true;
             }
-        }, 2000);
+        }
+        return false;
     }
 
-    function sliceFruit(event) {
-        const fruit = event.target;
-        score++;
-        scoreboard.textContent = score;
-        fruit.remove();
+    function update() {
+        moveSnake();
+        if (checkCollision()) {
+            clearInterval(gameInterval);
+            alert('Game Over');
+        }
     }
 
-    function startGame() {
-        score = 0;
-        scoreboard.textContent = score;
-        gameOver = false;
-        gameOverDisplay.style.display = 'none';
-        canvas.innerHTML = `<div id="scoreboard">Score: <span id="score">0</span></div>`;
-        canvas.appendChild(gameOverDisplay);
-
-        gameInterval = setInterval(() => {
-            createFruit();
-            if (score >= 10) {
-                clearInterval(gameInterval);
-                gameOver = true;
-                gameOverDisplay.style.display = 'block';
-                canvas.addEventListener('click', startGame, { once: true });
-            }
-        }, 1000);
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawSnake();
+        drawFood();
     }
 
-    startGame();
+    function gameLoop() {
+        update();
+        draw();
+    }
+
+    gameInterval = setInterval(gameLoop, 100);
+
+    canvas.addEventListener('touchstart', (event) => {
+        const touch = event.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        const touchX = touch.clientX - rect.left;
+        const touchY = touch.clientY - rect.top;
+
+        const head = snake[0];
+        if (Math.abs(touchX - head.x) > Math.abs(touchY - head.y)) {
+            direction = {x: touchX > head.x ? boxSize : -boxSize, y: 0};
+        } else {
+            direction = {x: 0, y: touchY > head.y ? boxSize : -boxSize};
+        }
+    });
 </script>
 
 </body>
