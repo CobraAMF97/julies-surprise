@@ -15,6 +15,7 @@
             height: 100vh;
             background-color: #000;
             overflow: hidden;
+            flex-direction: column;
         }
         #gameCanvas {
             background-color: #111;
@@ -34,6 +35,17 @@
             text-align: center;
             display: none; /* Masqué par défaut */
         }
+        #renarverButton {
+            display: none;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 24px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -41,12 +53,13 @@
 <!-- Musique de fond -->
 <audio id="background-music" autoplay loop>
     <source src="/mnt/data/Nathan Dawe x Bebe Rexha - Heart Still Beating (Official Visualiser).mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
+    Votre navigateur ne supporte pas l'élément audio.
 </audio>
 
 <canvas id="gameCanvas"></canvas>
 <div id="scoreboard">Score: <span id="score">0</span></div>
 <div id="errorMessage">Cette page ne peut être ouverte que sur un appareil mobile.</div>
+<button id="renarverButton" onclick="restartGame()">Renarver</button>
 
 <script>
     function isMobileDevice() {
@@ -54,14 +67,14 @@
     }
 
     if (!isMobileDevice()) {
-        // Afficher le message d'erreur et masquer le canvas du jeu
         document.getElementById('gameCanvas').style.display = 'none';
         document.getElementById('errorMessage').style.display = 'block';
     } else {
-        // Introduction à l'histoire
-        alert("Il était une fois, dans une forêt enchantée, un serpent sage qui gardait un secret précieux : le mot de passe d'un trésor caché. Mais ce mot de passe ne pouvait être révélé qu'à une âme courageuse qui réussirait une épreuve difficile. Guide le serpent et récolte les fruits magiques pour découvrir le mot de passe secret.");
+        startGame();
+    }
 
-        // Code du jeu Snake
+    function startGame() {
+        document.getElementById('renarverButton').style.display = 'none';
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const boxSize = 20;
@@ -70,7 +83,7 @@
         let food = {x: boxSize * Math.floor(Math.random() * 15), y: boxSize * Math.floor(Math.random() * 15)};
         let gameInterval;
         let score = 0;
-        const maxScore = 2001;  // Score à atteindre pour gagner
+        const maxScore = 2001;
 
         canvas.width = boxSize * 20;
         canvas.height = boxSize * 20;
@@ -94,16 +107,15 @@
 
             if (newHead.x === food.x && newHead.y === food.y) {
                 food = {x: boxSize * Math.floor(Math.random() * 15), y: boxSize * Math.floor(Math.random() * 15)};
-                score += 100;  // Ajouter 100 points au score
+                score += 100;
                 document.getElementById('score').innerText = score;
 
-                // Affichage des messages de l'histoire
                 showStoryMessage();
 
-                // Vérification de la condition de victoire
                 if (score >= maxScore) {
                     clearInterval(gameInterval);
                     alert("Félicitations, Julie ! Le serpent sait maintenant que tu es digne de connaître le mot de passe. Le voici : CAPDES3ANS. Utilise-le pour découvrir le trésor caché.");
+                    document.getElementById('renarverButton').style.display = 'block';
                 }
             } else {
                 snake.pop();
@@ -128,6 +140,7 @@
             if (checkCollision()) {
                 clearInterval(gameInterval);
                 alert('Game Over');
+                document.getElementById('renarverButton').style.display = 'block';
             }
         }
 
@@ -142,7 +155,6 @@
             draw();
         }
 
-        // Fonction pour afficher les messages de l'histoire en fonction du score
         function showStoryMessage() {
             if (score === 500) {
                 alert("Le serpent commence à se sentir plus confiant. Tu es sur la bonne voie, mais le chemin est encore long...");
@@ -153,7 +165,6 @@
             }
         }
 
-        // Lancer le jeu
         gameInterval = setInterval(gameLoop, 150);
 
         canvas.addEventListener('touchstart', (event) => {
@@ -169,6 +180,10 @@
                 direction = {x: 0, y: touchY > head.y ? boxSize : -boxSize};
             }
         });
+    }
+
+    function restartGame() {
+        startGame();
     }
 </script>
 
