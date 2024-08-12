@@ -19,9 +19,6 @@
             position: relative;
         }
         #gameCanvas {
-            position: absolute;
-            top: 0;
-            left: 0;
             background-color: #000; /* Fond de couleur noir */
             border: 1px solid #fff;
         }
@@ -90,59 +87,53 @@
         const ctx = canvas.getContext('2d');
         const confettiCtx = confettiCanvas.getContext('2d');
         const booCtx = booCanvas.getContext('2d');
-        const boxSize = 25;  // Taille augmentée pour une meilleure résolution
+        const boxSize = 25;  // Taille des cases
         let snake = [{x: boxSize * 5, y: boxSize * 5}];
         let direction = {x: boxSize, y: 0};
         let nextDirection = direction;  // Pour gérer la direction sans collisions opposées
-        let food = {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)};
+        let food = {x: boxSize * Math.floor(Math.random() * 16), y: boxSize * Math.floor(Math.random() * 16)};
         let obstacles = [
-            {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)},
-            {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)},
-            {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)}
+            {x: boxSize * Math.floor(Math.random() * 16), y: boxSize * Math.floor(Math.random() * 16)},
+            {x: boxSize * Math.floor(Math.random() * 16), y: boxSize * Math.floor(Math.random() * 16)},
+            {x: boxSize * Math.floor(Math.random() * 16), y: boxSize * Math.floor(Math.random() * 16)}
         ];
         let gameInterval;
         let score = 0;
         const maxScore = 2001;
         let headAnimationCounter = 0; // Pour gérer l'animation
 
-        // Ajuster la taille du canvas pour occuper tout l'écran
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            confettiCanvas.width = window.innerWidth;
-            confettiCanvas.height = window.innerHeight;
-            booCanvas.width = window.innerWidth;
-            booCanvas.height = window.innerHeight;
-        }
+        // Ajuster la taille du canvas pour être bien visible sur l'écran
+        canvas.width = boxSize * 20;  // Surface réduite pour tenir sur l'écran
+        canvas.height = boxSize * 20;
+        confettiCanvas.width = window.innerWidth;
+        confettiCanvas.height = window.innerHeight;
+        booCanvas.width = window.innerWidth;
+        booCanvas.height = window.innerHeight;
 
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        function drawEmoji(x, y, emoji) {
-            ctx.font = boxSize + 'px Arial';
-            ctx.fillText(emoji, x, y + boxSize);
+        function drawSquare(x, y, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, boxSize, boxSize);
         }
 
         function drawSnake() {
             // Dessiner la tête avec une animation si nécessaire
             if (headAnimationCounter > 0) {
-                ctx.font = (boxSize + 10) + 'px Arial'; // Augmenter temporairement la taille de la tête
-                drawEmoji(snake[0].x, snake[0].y, '⬜'); // La tête agrandie
+                drawSquare(snake[0].x, snake[0].y, 'white'); // La tête agrandie
                 headAnimationCounter--;
             } else {
-                drawEmoji(snake[0].x, snake[0].y, '⬜'); // La tête normale
+                drawSquare(snake[0].x, snake[0].y, 'white'); // La tête normale
             }
 
             // Dessiner le reste du corps
-            snake.slice(1).forEach(segment => drawEmoji(segment.x, segment.y, '⬜'));
+            snake.slice(1).forEach(segment => drawSquare(segment.x, segment.y, 'white'));
         }
 
         function drawFood() {
-            drawEmoji(food.x, food.y, '🦋');
+            drawSquare(food.x, food.y, 'green');
         }
 
         function drawObstacles() {
-            obstacles.forEach(obstacle => drawEmoji(obstacle.x, obstacle.y, '💣'));
+            obstacles.forEach(obstacle => drawSquare(obstacle.x, obstacle.y, 'red'));
         }
 
         function moveSnake() {
@@ -151,13 +142,13 @@
             snake.unshift(newHead);
 
             if (newHead.x === food.x && newHead.y === food.y) {
-                food = {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)};
+                food = {x: boxSize * Math.floor(Math.random() * 16), y: boxSize * Math.floor(Math.random() * 16)};
                 score += 100;
                 document.getElementById('score').innerText = score;
 
                 // Déplacer les obstacles rouges de manière aléatoire
                 obstacles = obstacles.map(obstacle => {
-                    return {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)};
+                    return {x: boxSize * Math.floor(Math.random() * 16), y: boxSize * Math.floor(Math.random() * 16)};
                 });
 
                 // Activer l'animation de la tête du serpent
