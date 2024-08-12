@@ -57,6 +57,12 @@
         #down { border-radius: 0 0 50% 50%; }
         #left { border-radius: 50% 0 0 50%; }
         #right { border-radius: 0 50% 50% 0; }
+        /* Cacher l'iframe */
+        #youtubePlayer {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
     </style>
 </head>
 <body>
@@ -78,9 +84,8 @@
     </div>
 </div>
 
-<audio id="backgroundMusic" src="background-music.mp3" loop></audio>
-<audio id="winSound" src="win-sound.mp3"></audio>
-<audio id="gameOverSound" src="game-over-sound.mp3"></audio>
+<!-- Intégration de la vidéo YouTube pour la musique de fond -->
+<iframe id="youtubePlayer" src="https://www.youtube.com/embed/IFW3O-PsRUo?autoplay=1&loop=1&playlist=IFW3O-PsRUo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 <script>
     function isMobileDevice() {
@@ -214,14 +219,14 @@
         document.getElementById('left').addEventListener('click', () => changeDirection({x: -boxSize, y: 0}));
         document.getElementById('right').addEventListener('click', () => changeDirection({x: boxSize, y: 0}));
 
-        // Initialiser les sons et vérifier leur chargement
+        // Initialiser les sons
         function initializeAudio() {
             const bgMusic = document.getElementById('backgroundMusic');
             const winSound = document.getElementById('winSound');
             const gameOverSound = document.getElementById('gameOverSound');
 
             bgMusic.addEventListener('canplaythrough', () => {
-                console.log('Musique de fond prête.');
+                bgMusic.volume = 0.5; // Ajuster le volume de la musique de fond
             });
 
             bgMusic.addEventListener('error', (e) => {
