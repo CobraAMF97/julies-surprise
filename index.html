@@ -47,53 +47,14 @@
             border: none;
             border-radius: 5px;
         }
-        .arrow {
-            position: absolute;
-            width: 50px; /* Taille réduite des flèches */
-            height: 50px;
-            opacity: 0.3;
-            z-index: 10; /* Assurer que les flèches sont au-dessus du canvas */
-            color: white; /* Couleur des flèches */
-            text-align: center;
-            line-height: 50px;
-            font-size: 40px;
-        }
-        #arrowUp {
-            top: 10px;
-            left: calc(50% - 25px);
-        }
-        #arrowDown {
-            bottom: 10px;
-            left: calc(50% - 25px);
-        }
-        #arrowLeft {
-            left: 10px;
-            top: calc(50% - 25px);
-        }
-        #arrowRight {
-            right: 10px;
-            top: calc(50% - 25px);
-        }
     </style>
 </head>
 <body>
-
-<!-- Musique de fond -->
-<audio id="background-music" loop>
-    <source src="/mnt/data/Nathan Dawe x Bebe Rexha - Heart Still Beating (Official Visualiser).mp3" type="audio/mpeg">
-    Votre navigateur ne supporte pas l'élément audio.
-</audio>
 
 <canvas id="gameCanvas"></canvas>
 <div id="scoreboard">Score: <span id="score">0</span></div>
 <div id="errorMessage">Cette page ne peut être ouverte que sur un appareil mobile.</div>
 <button id="renarverButton" onclick="restartGame()">Renarver</button>
-
-<!-- Flèches directionnelles -->
-<div id="arrowUp" class="arrow">▲</div>
-<div id="arrowDown" class="arrow">▼</div>
-<div id="arrowLeft" class="arrow">◀</div>
-<div id="arrowRight" class="arrow">▶</div>
 
 <script>
     function isMobileDevice() {
@@ -104,17 +65,14 @@
         document.getElementById('gameCanvas').style.display = 'none';
         document.getElementById('errorMessage').style.display = 'block';
     } else {
+        // Afficher le tutoriel au début du jeu
+        alert("Bienvenue dans la quête du Serpent Sage !\n\nPour guider le serpent, il te suffit de toucher l'écran :\n- Touche à gauche de l'écran pour aller à gauche\n- Touche à droite pour aller à droite\n- Touche en haut pour monter\n- Touche en bas pour descendre\n\nFacile, non ? Mais attention aux murs et à l'obstacle rouge...");
+
         startGame();
     }
 
     function startGame() {
         document.getElementById('renarverButton').style.display = 'none';
-
-        // Démarrer la musique lors de la première interaction
-        const music = document.getElementById('background-music');
-        document.body.addEventListener('touchstart', () => {
-            music.play();
-        }, { once: true });
 
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -205,34 +163,24 @@
             draw();
         }
 
-        function showStoryMessage() {
-            if (score === 500) {
-                alert("Le serpent commence à se sentir plus confiant. Tu es sur la bonne voie, mais le chemin est encore long...");
-            } else if (score === 1000) {
-                alert("Le serpent s'émerveille de ta ténacité. Il sait que tu es proche du secret, mais il faut encore plus d'efforts.");
-            } else if (score === 1500) {
-                alert("Le serpent est impressionné ! Très peu sont allés aussi loin. Le secret n'est plus qu'à portée de main...");
+        // Contrôles fluides du serpent
+        document.addEventListener('touchstart', (event) => {
+            const touchX = event.touches[0].clientX;
+            const touchY = event.touches[0].clientY;
+            const rect = canvas.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            if (Math.abs(touchX - centerX) > Math.abs(touchY - centerY)) {
+                // Mouvement horizontal
+                direction = touchX > centerX ? {x: boxSize, y: 0} : {x: -boxSize, y: 0};
+            } else {
+                // Mouvement vertical
+                direction = touchY > centerY ? {x: 0, y: boxSize} : {x: 0, y: -boxSize};
             }
-        }
+        });
 
         gameInterval = setInterval(gameLoop, 150);
-
-        // Ajouter les événements de direction pour les flèches transparentes
-        document.getElementById('arrowUp').addEventListener('touchstart', () => {
-            if (direction.y === 0) direction = {x: 0, y: -boxSize};
-        });
-
-        document.getElementById('arrowDown').addEventListener('touchstart', () => {
-            if (direction.y === 0) direction = {x: 0, y: boxSize};
-        });
-
-        document.getElementById('arrowLeft').addEventListener('touchstart', () => {
-            if (direction.x === 0) direction = {x: -boxSize, y: 0};
-        });
-
-        document.getElementById('arrowRight').addEventListener('touchstart', () => {
-            if (direction.x === 0) direction = {x: boxSize, y: 0};
-        });
     }
 
     function restartGame() {
@@ -242,4 +190,3 @@
 
 </body>
 </html>
-
