@@ -87,24 +87,24 @@
         const ctx = canvas.getContext('2d');
         const confettiCtx = confettiCanvas.getContext('2d');
         const booCtx = booCanvas.getContext('2d');
-        const boxSize = 25;  // Taille des cases
+        const boxSize = 20;  // Taille des cases plus petite pour ajuster la surface
         let snake = [{x: boxSize * 5, y: boxSize * 5}];
         let direction = {x: boxSize, y: 0};
         let nextDirection = direction;  // Pour gérer la direction sans collisions opposées
-        let food = {x: boxSize * Math.floor(Math.random() * 16), y: boxSize * Math.floor(Math.random() * 16)};
+        let food = {x: boxSize * Math.floor(Math.random() * 12), y: boxSize * Math.floor(Math.random() * 12)};
         let obstacles = [
-            {x: boxSize * Math.floor(Math.random() * 16), y: boxSize * Math.floor(Math.random() * 16)},
-            {x: boxSize * Math.floor(Math.random() * 16), y: boxSize * Math.floor(Math.random() * 16)},
-            {x: boxSize * Math.floor(Math.random() * 16), y: boxSize * Math.floor(Math.random() * 16)}
+            {x: boxSize * Math.floor(Math.random() * 12), y: boxSize * Math.floor(Math.random() * 12)},
+            {x: boxSize * Math.floor(Math.random() * 12), y: boxSize * Math.floor(Math.random() * 12)},
+            {x: boxSize * Math.floor(Math.random() * 12), y: boxSize * Math.floor(Math.random() * 12)}
         ];
         let gameInterval;
         let score = 0;
         const maxScore = 2001;
         let headAnimationCounter = 0; // Pour gérer l'animation
 
-        // Ajuster la taille du canvas pour être bien visible sur l'écran
-        canvas.width = boxSize * 20;  // Surface réduite pour tenir sur l'écran
-        canvas.height = boxSize * 20;
+        // Ajuster la taille du canvas pour être plus petite
+        canvas.width = boxSize * 15;  // Surface réduite pour mieux s'adapter à l'écran
+        canvas.height = boxSize * 15;
         confettiCanvas.width = window.innerWidth;
         confettiCanvas.height = window.innerHeight;
         booCanvas.width = window.innerWidth;
@@ -142,13 +142,13 @@
             snake.unshift(newHead);
 
             if (newHead.x === food.x && newHead.y === food.y) {
-                food = {x: boxSize * Math.floor(Math.random() * 16), y: boxSize * Math.floor(Math.random() * 16)};
+                food = {x: boxSize * Math.floor(Math.random() * 12), y: boxSize * Math.floor(Math.random() * 12)};
                 score += 100;
                 document.getElementById('score').innerText = score;
 
                 // Déplacer les obstacles rouges de manière aléatoire
                 obstacles = obstacles.map(obstacle => {
-                    return {x: boxSize * Math.floor(Math.random() * 16), y: boxSize * Math.floor(Math.random() * 16)};
+                    return {x: boxSize * Math.floor(Math.random() * 12), y: boxSize * Math.floor(Math.random() * 12)};
                 });
 
                 // Activer l'animation de la tête du serpent
@@ -193,7 +193,6 @@
                 clearInterval(gameInterval);
                 showBooAnimation();
                 setTimeout(() => {
-                    alert('Bouuuh t\'es nul');
                     document.getElementById('renarverButton').style.display = 'block';
                 }, 1000);
             }
@@ -246,7 +245,7 @@
             booCtx.clearRect(0, 0, booCanvas.width, booCanvas.height);
             booCtx.font = 'bold 50px Arial';
             booCtx.fillStyle = 'red';
-            booCtx.fillText('Bouuuh t\'es nul', booCanvas.width / 2 - 150, booCanvas.height / 2);
+            booCtx.fillText('', booCanvas.width / 2 - 150, booCanvas.height / 2); // Plus de texte, juste l'animation
         }
     }
 
