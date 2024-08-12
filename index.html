@@ -16,6 +16,7 @@
             background-color: #000;
             overflow: hidden;
             flex-direction: column;
+            position: relative;
         }
         #gameCanvas {
             background-color: #111;
@@ -46,6 +47,28 @@
             border: none;
             border-radius: 5px;
         }
+        .arrow {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            opacity: 0.3;
+        }
+        #arrowUp {
+            top: 10px;
+            left: calc(50% - 50px);
+        }
+        #arrowDown {
+            bottom: 10px;
+            left: calc(50% - 50px);
+        }
+        #arrowLeft {
+            left: 10px;
+            top: calc(50% - 50px);
+        }
+        #arrowRight {
+            right: 10px;
+            top: calc(50% - 50px);
+        }
     </style>
 </head>
 <body>
@@ -61,6 +84,12 @@
 <div id="errorMessage">Cette page ne peut être ouverte que sur un appareil mobile.</div>
 <button id="renarverButton" onclick="restartGame()">Renarver</button>
 
+<!-- Flèches directionnelles -->
+<div id="arrowUp" class="arrow">▲</div>
+<div id="arrowDown" class="arrow">▼</div>
+<div id="arrowLeft" class="arrow">◀</div>
+<div id="arrowRight" class="arrow">▶</div>
+
 <script>
     function isMobileDevice() {
         return /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
@@ -75,7 +104,7 @@
 
     function startGame() {
         document.getElementById('renarverButton').style.display = 'none';
-        
+
         // Démarrer la musique lors de la première interaction
         const music = document.getElementById('background-music');
         document.body.addEventListener('touchstart', () => {
@@ -84,16 +113,20 @@
 
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const boxSize = 20;
-        let snake = [{x: boxSize * 5, y: boxSize * 5}];
+        const boxSize = 15;  // Taille réduite
+        let snake = [{x: boxSize * 10, y: boxSize * 10}];
         let direction = {x: boxSize, y: 0};
-        let food = {x: boxSize * Math.floor(Math.random() * 15), y: boxSize * Math.floor(Math.random() * 15)};
+        let food = {x: boxSize * Math.floor(Math.random() * 30), y: boxSize * Math.floor(Math.random() * 30)};
+        let obstacles = [
+            {x: boxSize * 15, y: boxSize * 15},
+            {x: boxSize * 20, y: boxSize * 25}
+        ];
         let gameInterval;
         let score = 0;
         const maxScore = 2001;
 
-        canvas.width = boxSize * 20;
-        canvas.height = boxSize * 20;
+        canvas.width = boxSize * 40;  // Surface de jeu plus grande
+        canvas.height = boxSize * 40;
 
         function drawBox(x, y, color) {
             ctx.fillStyle = color;
@@ -108,12 +141,16 @@
             drawBox(food.x, food.y, 'red');
         }
 
+        function drawObstacles() {
+            obstacles.forEach(obstacle => drawBox(obstacle.x, obstacle.y, 'gray'));
+        }
+
         function moveSnake() {
             const newHead = {x: snake[0].x + direction.x, y: snake[0].y + direction.y};
             snake.unshift(newHead);
 
             if (newHead.x === food.x && newHead.y === food.y) {
-                food = {x: boxSize * Math.floor(Math.random() * 15), y: boxSize * Math.floor(Math.random() * 15)};
+                food = {x: boxSize * Math.floor(Math.random() * 30), y: boxSize * Math.floor(Math.random() * 30)};
                 score += 100;
                 document.getElementById('score').innerText = score;
 
@@ -139,6 +176,11 @@
                     return true;
                 }
             }
+            for (let i = 0; i < obstacles.length; i++) {
+                if (head.x === obstacles[i].x && head.y === obstacles[i].y) {
+                    return true;
+                }
+            }
             return false;
         }
 
@@ -155,6 +197,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawSnake();
             drawFood();
+            drawObstacles();
         }
 
         function gameLoop() {
@@ -174,18 +217,21 @@
 
         gameInterval = setInterval(gameLoop, 150);
 
-        canvas.addEventListener('touchstart', (event) => {
-            const touch = event.touches[0];
-            const rect = canvas.getBoundingClientRect();
-            const touchX = touch.clientX - rect.left;
-            const touchY = touch.clientY - rect.top;
+        // Ajouter les événements de direction pour les flèches transparentes
+        document.getElementById('arrowUp').addEventListener('touchstart', () => {
+            if (direction.y === 0) direction = {x: 0, y: -boxSize};
+        });
 
-            const head = snake[0];
-            if (Math.abs(touchX - head.x) > Math.abs(touchY - head.y)) {
-                direction = {x: touchX > head.x ? boxSize : -boxSize, y: 0};
-            } else {
-                direction = {x: 0, y: touchY > head.y ? boxSize : -boxSize};
-            }
+        document.getElementById('arrowDown').addEventListener('touchstart', () => {
+            if (direction.y === 0) direction = {x: 0, y: boxSize};
+        });
+
+        document.getElementById('arrowLeft').addEventListener('touchstart', () => {
+            if (direction.x === 0) direction = {x: -boxSize, y: 0};
+        });
+
+        document.getElementById('arrowRight').addEventListener('touchstart', () => {
+            if (direction.x === 0) direction = {x: boxSize, y: 0};
         });
     }
 
