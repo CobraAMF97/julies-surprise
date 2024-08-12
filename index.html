@@ -34,9 +34,12 @@
         }
         .control-buttons {
             display: flex;
-            flex-wrap: wrap;
-            width: 180px; /* Ajustez la largeur selon vos besoins */
+            flex-direction: column;
+            align-items: center;
             margin-top: 20px;
+        }
+        .row {
+            display: flex;
         }
         .control-button {
             width: 60px;
@@ -63,11 +66,21 @@
 <div id="errorMessage">Cette page ne peut être ouverte que sur un appareil mobile.</div>
 
 <div class="control-buttons">
-    <div id="up" class="control-button">↑</div>
-    <div id="left" class="control-button">←</div>
-    <div id="right" class="control-button">→</div>
-    <div id="down" class="control-button">↓</div>
+    <div class="row">
+        <div id="left" class="control-button">←</div>
+        <div id="right" class="control-button">→</div>
+    </div>
+    <div class="row">
+        <div id="up" class="control-button">↑</div>
+    </div>
+    <div class="row">
+        <div id="down" class="control-button">↓</div>
+    </div>
 </div>
+
+<audio id="backgroundMusic" src="background-music.mp3" loop autoplay></audio>
+<audio id="winSound" src="win-sound.mp3"></audio>
+<audio id="gameOverSound" src="game-over-sound.mp3"></audio>
 
 <script>
     function isMobileDevice() {
@@ -114,6 +127,7 @@
             if (newHead.x === food.x && newHead.y === food.y) {
                 food = {x: boxSize * Math.floor(Math.random() * 15), y: boxSize * Math.floor(Math.random() * 15)};
                 updateScore();  // Met à jour le score et affiche les messages de l'histoire
+                document.getElementById('winSound').play(); // Jouer le son de victoire
             } else {
                 snake.pop();
             }
@@ -136,6 +150,7 @@
             moveSnake();
             if (checkCollision()) {
                 clearInterval(gameInterval);
+                document.getElementById('gameOverSound').play(); // Jouer le son de game over
                 showGameOverMessage();
             }
         }
@@ -197,12 +212,4 @@
         document.getElementById('up').addEventListener('click', () => changeDirection({x: 0, y: -boxSize}));
         document.getElementById('down').addEventListener('click', () => changeDirection({x: 0, y: boxSize}));
         document.getElementById('left').addEventListener('click', () => changeDirection({x: -boxSize, y: 0}));
-        document.getElementById('right').addEventListener('click', () => changeDirection({x: boxSize, y: 0}));
-
-        // Ralentir le serpent en augmentant l'intervalle du jeu
-        gameInterval = setInterval(gameLoop, 150);
-    }
-</script>
-
-</body>
-</html>
+        document.getElementById('right').addEventListener('click', ()
