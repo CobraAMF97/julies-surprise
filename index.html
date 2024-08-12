@@ -9,16 +9,15 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background: linear-gradient(to bottom, #00bfff, #008080);
             font-family: 'Georgia', serif;
+            background-color: #000;
         }
 
         #gameCanvas {
-            background: url('https://i.imgur.com/wvHBB7A.jpg') no-repeat center center;
+            background: url('photorealistic-beach-at-sunset-1242075606326313030.jpeg') no-repeat center center;
             background-size: cover;
             display: block;
             margin: 0 auto;
-            border: 1px solid #000;
         }
 
         .score {
@@ -40,16 +39,16 @@
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
-    // Dimension du jeu
-    canvas.width = 800;
-    canvas.height = 600;
+    // Dimension du jeu, ajustée pour le mobile
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
     // Chargement des images
     const shellImg = new Image();
-    shellImg.src = 'https://i.imgur.com/dWtCFTp.png'; // Image du coquillage
+    shellImg.src = 'https://img.icons8.com/plasticine/100/000000/spiral-shell.png'; // Image du coquillage
 
     const obstacleImg = new Image();
-    obstacleImg.src = 'https://i.imgur.com/OZlfm4T.png'; // Image du corail (obstacle)
+    obstacleImg.src = 'https://img.icons8.com/plasticine/100/000000/coral.png'; // Image du corail (obstacle)
 
     let shell = {
         x: 50,
