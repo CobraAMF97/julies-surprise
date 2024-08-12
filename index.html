@@ -66,7 +66,7 @@
         document.getElementById('errorMessage').style.display = 'block';
     } else {
         // Afficher le tutoriel au début du jeu
-        alert("Bienvenue dans la quête du Serpent Sage !\n\nPour guider le serpent, il te suffit de toucher l'écran :\n- Touche à gauche de l'écran pour aller à gauche\n- Touche à droite pour aller à droite\n- Touche en haut pour monter\n- Touche en bas pour descendre\n\nFacile, non ? Mais attention aux murs et aux obstacles rouges...");
+        alert("Bienvenue dans la quête du Serpent Sage !\n\nPour guider le serpent, il te suffit de toucher l'écran :\n- Touche à gauche de l'écran pour aller à gauche\n- Touche à droite pour aller à droite\n- Touche en haut pour monter\n- Touche en bas pour descendre\n\nFacile, non ? Mais attention aux murs et aux bombes 💣...");
 
         startGame();
     }
@@ -92,21 +92,21 @@
         canvas.width = boxSize * 20;  // Surface de jeu d'origine
         canvas.height = boxSize * 20;
 
-        function drawBox(x, y, color) {
-            ctx.fillStyle = color;
-            ctx.fillRect(x, y, boxSize, boxSize);
+        function drawEmoji(x, y, emoji) {
+            ctx.font = boxSize + 'px Arial';
+            ctx.fillText(emoji, x, y + boxSize);
         }
 
         function drawSnake() {
-            snake.forEach(segment => drawBox(segment.x, segment.y, 'white'));
+            snake.forEach(segment => drawEmoji(segment.x, segment.y, '⬜'));
         }
 
         function drawFood() {
-            drawBox(food.x, food.y, 'green');
+            drawEmoji(food.x, food.y, '🦋');
         }
 
         function drawObstacles() {
-            obstacles.forEach(obstacle => drawBox(obstacle.x, obstacle.y, 'red'));
+            obstacles.forEach(obstacle => drawEmoji(obstacle.x, obstacle.y, '💣'));
         }
 
         function moveSnake() {
