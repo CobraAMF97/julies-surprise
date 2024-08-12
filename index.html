@@ -13,26 +13,26 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #fff; /* Fond de couleur blanc */
+            background-color: #000; /* Fond de couleur noir */
             overflow: hidden;
             flex-direction: column;
             position: relative;
         }
         #gameCanvas {
-            background-color: #fff; /* Fond de couleur blanc */
+            background-color: #000; /* Fond de couleur noir */
             position: relative;
-            border: 1px solid #000;
+            border: 1px solid #fff;
         }
         #scoreboard {
             position: absolute;
             top: 10px;
             left: 10px;
-            color: black;
+            color: white;
             font-size: 24px;
             z-index: 10;
         }
         #errorMessage {
-            color: black;
+            color: white;
             font-size: 24px;
             text-align: center;
             display: none; /* Masqué par défaut */
@@ -77,7 +77,7 @@
 
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const boxSize = 25;  // Taille légèrement augmentée pour une meilleure résolution
+        const boxSize = 25;  // Taille augmentée pour une meilleure résolution
         let snake = [{x: boxSize * 5, y: boxSize * 5}];
         let direction = {x: boxSize, y: 0};
         let nextDirection = direction;  // Pour gérer la direction sans collisions opposées
@@ -90,6 +90,7 @@
         let gameInterval;
         let score = 0;
         const maxScore = 2001;
+        let headAnimationCounter = 0; // Pour gérer l'animation
 
         canvas.width = boxSize * 20;  // Surface de jeu augmentée pour une meilleure résolution
         canvas.height = boxSize * 20;
@@ -100,7 +101,17 @@
         }
 
         function drawSnake() {
-            snake.forEach(segment => drawEmoji(segment.x, segment.y, '⬛'));  // Serpent noir
+            // Dessiner la tête avec une animation si nécessaire
+            if (headAnimationCounter > 0) {
+                ctx.font = (boxSize + 10) + 'px Arial'; // Augmenter temporairement la taille de la tête
+                drawEmoji(snake[0].x, snake[0].y, '⬜'); // La tête agrandie
+                headAnimationCounter--;
+            } else {
+                drawEmoji(snake[0].x, snake[0].y, '⬜'); // La tête normale
+            }
+
+            // Dessiner le reste du corps
+            snake.slice(1).forEach(segment => drawEmoji(segment.x, segment.y, '⬜'));
         }
 
         function drawFood() {
@@ -125,6 +136,9 @@
                 obstacles = obstacles.map(obstacle => {
                     return {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)};
                 });
+
+                // Activer l'animation de la tête du serpent
+                headAnimationCounter = 5;
 
                 showStoryMessage();
 
