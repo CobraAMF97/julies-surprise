@@ -3,115 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu de Réflexes Amélioré</title>
+    <title>Fruit Ninja Simplifié</title>
     <style>
         body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
             font-family: 'Georgia', serif;
+            background-color: #f0f0f0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
         }
-        #game-container {
+
+        #gameCanvas {
+            background-color: #87CEEB;
+            width: 100%;
+            height: 100%;
             position: relative;
-            width: 300px;
-            height: 300px;
-            border: 2px solid #333;
-            background-color: #fff;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 15px;
         }
-        #target-button {
+
+        .fruit {
             position: absolute;
             width: 60px;
             height: 60px;
-            background-color: #FF4500;
-            color: #fff;
-            font-size: 1.5em;
-            text-align: center;
-            line-height: 60px;
-            border-radius: 50%;
+            background-size: cover;
             cursor: pointer;
-            display: none;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
         }
-        #password-container {
-            display: none;
-            margin-top: 20px;
-            text-align: center;
-        }
-        input[type="password"] {
-            padding: 10px;
-            margin-top: 20px;
-            font-size: 1.1em;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 1.1em;
-            cursor: pointer;
-            margin-top: 10px;
-            background-color: #28a745;
+
+        #scoreboard {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
             color: white;
-            border: none;
-            border-radius: 8px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 10;
         }
-        button:hover {
-            background-color: #218838;
+
+        #gameOver {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 36px;
+            color: white;
+            text-align: center;
+            z-index: 10;
         }
     </style>
 </head>
 <body>
 
-<div id="game-container">
-    <div id="target-button">💥</div>
-</div>
-<div id="password-container">
-    <p>Score atteint ! Entrez le mot de passe :</p>
-    <input type="password" id="password-input" placeholder="Mot de passe">
-    <button onclick="checkPassword()">Déverrouiller</button>
+<div id="gameCanvas">
+    <div id="scoreboard">Score: <span id="score">0</span></div>
+    <div id="gameOver">
+        <p>Game Over!</p>
+        <p>Touchez pour recommencer</p>
+    </div>
 </div>
 
 <script>
-    const targetButton = document.getElementById('target-button');
-    const gameContainer = document.getElementById('game-container');
+    const canvas = document.getElementById('gameCanvas');
+    const scoreboard = document.getElementById('score');
+    const gameOverDisplay = document.getElementById('gameOver');
     let score = 0;
-    const maxScore = 10; // Augmentation du score maximum pour plus de challenge
+    let fruits = ['🍎', '🍌', '🍒', '🍇', '🍉'];
+    let gameInterval;
+    let gameOver = false;
 
-    function moveButton() {
-        const x = Math.random() * (gameContainer.offsetWidth - targetButton.offsetWidth);
-        const y = Math.random() * (gameContainer.offsetHeight - targetButton.offsetHeight);
-        targetButton.style.left = `${x}px`;
-        targetButton.style.top = `${y}px`;
-        targetButton.style.display = 'block';
+    function getRandomPosition() {
+        const x = Math.random() * (canvas.clientWidth - 60);
+        const y = Math.random() * (canvas.clientHeight - 60);
+        return { x, y };
     }
 
-    targetButton.addEventListener('click', () => {
+    function createFruit() {
+        if (gameOver) return;
+
+        const fruitElement = document.createElement('div');
+        fruitElement.classList.add('fruit');
+        const fruitType = fruits[Math.floor(Math.random() * fruits.length)];
+        fruitElement.textContent = fruitType;
+
+        const { x, y } = getRandomPosition();
+        fruitElement.style.left = `${x}px`;
+        fruitElement.style.top = `${y}px`;
+
+        canvas.appendChild(fruitElement);
+
+        fruitElement.addEventListener('click', sliceFruit);
+
+        setTimeout(() => {
+            if (!gameOver) {
+                fruitElement.remove();
+            }
+        }, 2000);
+    }
+
+    function sliceFruit(event) {
+        const fruit = event.target;
         score++;
-        targetButton.style.display = 'none';
-        if (score >= maxScore) {
-            document.getElementById('password-container').style.display = 'block';
-            gameContainer.style.display = 'none';
-        } else {
-            setTimeout(moveButton, 1000);
-        }
-    });
-
-    function checkPassword() {
-        const input = document.getElementById("password-input").value;
-        const correctPassword = "CAPDES3ANS";
-        if (input === correctPassword) {
-            alert("Mot de passe correct ! Le podcast est débloqué.");
-        } else {
-            alert("Mot de passe incorrect. Réessayez.");
-        }
+        scoreboard.textContent = score;
+        fruit.remove();
     }
 
-    setTimeout(moveButton, 1000);
+    function startGame() {
+        score = 0;
+        scoreboard.textContent = score;
+        gameOver = false;
+        gameOverDisplay.style.display = 'none';
+        canvas.innerHTML = `<div id="scoreboard">Score: <span id="score">0</span></div>`;
+        canvas.appendChild(gameOverDisplay);
+
+        gameInterval = setInterval(() => {
+            createFruit();
+            if (score >= 10) {
+                clearInterval(gameInterval);
+                gameOver = true;
+                gameOverDisplay.style.display = 'block';
+                canvas.addEventListener('click', startGame, { once: true });
+            }
+        }, 1000);
+    }
+
+    startGame();
 </script>
 
 </body>
