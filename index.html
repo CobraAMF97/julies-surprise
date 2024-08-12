@@ -78,7 +78,7 @@
     </div>
 </div>
 
-<audio id="backgroundMusic" src="background-music.mp3" loop autoplay></audio>
+<audio id="backgroundMusic" src="background-music.mp3" loop></audio>
 <audio id="winSound" src="win-sound.mp3"></audio>
 <audio id="gameOverSound" src="game-over-sound.mp3"></audio>
 
@@ -214,6 +214,39 @@
         document.getElementById('left').addEventListener('click', () => changeDirection({x: -boxSize, y: 0}));
         document.getElementById('right').addEventListener('click', () => changeDirection({x: boxSize, y: 0}));
 
+        // Initialiser les sons et vérifier leur chargement
+        function initializeAudio() {
+            const bgMusic = document.getElementById('backgroundMusic');
+            const winSound = document.getElementById('winSound');
+            const gameOverSound = document.getElementById('gameOverSound');
+
+            bgMusic.addEventListener('canplaythrough', () => {
+                console.log('Musique de fond prête.');
+            });
+
+            bgMusic.addEventListener('error', (e) => {
+                console.error('Erreur de chargement de la musique de fond:', e);
+            });
+
+            winSound.addEventListener('canplaythrough', () => {
+                console.log('Son de victoire prêt.');
+            });
+
+            winSound.addEventListener('error', (e) => {
+                console.error('Erreur de chargement du son de victoire:', e);
+            });
+
+            gameOverSound.addEventListener('canplaythrough', () => {
+                console.log('Son de game over prêt.');
+            });
+
+            gameOverSound.addEventListener('error', (e) => {
+                console.error('Erreur de chargement du son de game over:', e);
+            });
+        }
+
+        initializeAudio();
+
         // Ralentir le serpent en augmentant l'intervalle du jeu
         gameInterval = setInterval(gameLoop, 150);
     }
@@ -221,4 +254,3 @@
 
 </body>
 </html>
-
