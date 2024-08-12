@@ -212,4 +212,13 @@
         document.getElementById('up').addEventListener('click', () => changeDirection({x: 0, y: -boxSize}));
         document.getElementById('down').addEventListener('click', () => changeDirection({x: 0, y: boxSize}));
         document.getElementById('left').addEventListener('click', () => changeDirection({x: -boxSize, y: 0}));
-        document.getElementById('right').addEventListener('click', ()
+        document.getElementById('right').addEventListener('click', () => changeDirection({x: boxSize, y: 0}));
+
+        // Ralentir le serpent en augmentant l'intervalle du jeu
+        gameInterval = setInterval(gameLoop, 150);
+    }
+</script>
+
+</body>
+</html>
+
