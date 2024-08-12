@@ -49,25 +49,30 @@
         }
         .arrow {
             position: absolute;
-            width: 100px;
-            height: 100px;
+            width: 50px; /* Taille réduite des flèches */
+            height: 50px;
             opacity: 0.3;
+            z-index: 10; /* Assurer que les flèches sont au-dessus du canvas */
+            color: white; /* Couleur des flèches */
+            text-align: center;
+            line-height: 50px;
+            font-size: 40px;
         }
         #arrowUp {
             top: 10px;
-            left: calc(50% - 50px);
+            left: calc(50% - 25px);
         }
         #arrowDown {
             bottom: 10px;
-            left: calc(50% - 50px);
+            left: calc(50% - 25px);
         }
         #arrowLeft {
             left: 10px;
-            top: calc(50% - 50px);
+            top: calc(50% - 25px);
         }
         #arrowRight {
             right: 10px;
-            top: calc(50% - 50px);
+            top: calc(50% - 25px);
         }
     </style>
 </head>
@@ -117,10 +122,7 @@
         let snake = [{x: boxSize * 5, y: boxSize * 5}];
         let direction = {x: boxSize, y: 0};
         let food = {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)};
-        let obstacles = [
-            {x: boxSize * 10, y: boxSize * 10},
-            {x: boxSize * 15, y: boxSize * 15}
-        ];
+        let obstacle = {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)};
         let gameInterval;
         let score = 0;
         const maxScore = 2001;
@@ -134,15 +136,15 @@
         }
 
         function drawSnake() {
-            snake.forEach(segment => drawBox(segment.x, segment.y, 'green'));
+            snake.forEach(segment => drawBox(segment.x, segment.y, 'white'));
         }
 
         function drawFood() {
-            drawBox(food.x, food.y, 'red');
+            drawBox(food.x, food.y, 'green');
         }
 
-        function drawObstacles() {
-            obstacles.forEach(obstacle => drawBox(obstacle.x, obstacle.y, 'gray'));
+        function drawObstacle() {
+            drawBox(obstacle.x, obstacle.y, 'red');
         }
 
         function moveSnake() {
@@ -176,10 +178,8 @@
                     return true;
                 }
             }
-            for (let i = 0; i < obstacles.length; i++) {
-                if (head.x === obstacles[i].x && head.y === obstacles[i].y) {
-                    return true;
-                }
+            if (head.x === obstacle.x && head.y === obstacle.y) {
+                return true;
             }
             return false;
         }
@@ -197,7 +197,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawSnake();
             drawFood();
-            drawObstacles();
+            drawObstacle();
         }
 
         function gameLoop() {
@@ -242,3 +242,4 @@
 
 </body>
 </html>
+
