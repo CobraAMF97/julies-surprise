@@ -3,134 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surprise pour Julie</title>
+    <title>Flappy Shell - Coquillage Volant</title>
     <style>
-        /* Fond de page inspiré de l'image générée */
         body {
-            font-family: 'Georgia', serif;
-            background: linear-gradient(135deg, #e7dcc3 0%, #f6f2e9 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
-            color: #333;
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #00bfff, #008080);
+            font-family: 'Georgia', serif;
         }
 
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            text-align: center;
+        #gameCanvas {
+            background: url('https://image.shutterstock.com/image-vector/underwater-sea-background-sandy-ocean-260nw-1885993075.jpg') no-repeat center center;
+            background-size: cover;
+            display: block;
+            margin: 0 auto;
+            border: 1px solid #000;
         }
 
-        p {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        #game {
-            position: relative;
-            width: 600px;
-            height: 600px;
-            border: 2px solid #ddd;
-            border-radius: 15px;
-            background-color: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .star {
-            width: 50px;
-            height: 50px;
-            background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Full_Star_Yellow.svg/1024px-Full_Star_Yellow.svg.png') no-repeat center;
-            background-size: contain;
-            cursor: pointer;
-            margin: 10px;
-        }
-
-        #password-container {
-            display: none;
-            margin-top: 30px;
-            text-align: center;
-        }
-
-        input[type="password"] {
-            width: 80%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            font-size: 1.1em;
-            background-color: rgba(255, 255, 255, 0.7);
-            color: #333;
-        }
-
-        button {
-            padding: 10px 30px;
-            background-color: #007bff;
+        .score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
             color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1.1em;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-            transform: translateY(-3px);
+            font-size: 24px;
+            z-index: 10;
         }
     </style>
 </head>
 <body>
-    <div>
-        <h1>Bienvenue à Trouville-sur-Mer, Julie !</h1>
-        <p>Clique sur l'étoile correcte pour déverrouiller le mot de passe !</p>
-        <div id="game">
-            <!-- Étoiles générées par JavaScript -->
-        </div>
-        <div id="password-container">
-            <p>Vous avez trouvé l'étoile ! Entrez le mot de passe :</p>
-            <input type="password" id="password-input" placeholder="Mot de passe">
-            <button onclick="checkPassword()">Déverrouiller</button>
-        </div>
-    </div>
 
-    <script>
-        // Générer les étoiles
-        const gameContainer = document.getElementById('game');
-        const totalStars = 12;
-        const correctStarIndex = Math.floor(Math.random() * totalStars);
+<canvas id="gameCanvas"></canvas>
+<div class="score">Score: <span id="score">0</span></div>
 
-        for (let i = 0; i < totalStars; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.onclick = function() {
-                if (i === correctStarIndex) {
-                    document.getElementById('game').style.display = 'none';
-                    document.getElementById('password-container').style.display = 'block';
-                } else {
-                    alert('Désolé, ce n\'est pas la bonne étoile. Réessayez !');
-                }
-            };
-            gameContainer.appendChild(star);
-        }
+<script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
 
-        // Vérifier le mot de passe
-        function checkPassword() {
-            var input = document.getElementById("password-input").value;
-            var correctPassword = "CAPDES3ANS";
+    // Dimension du jeu
+    canvas.width = 800;
+    canvas.height = 600;
 
-            if (input === correctPassword) {
-                alert("Mot de passe correct ! Le podcast est débloqué.");
-                // Ajoutez ici le code pour afficher le podcast ou rediriger vers une autre page
-            } else {
-                alert("Mot de passe incorrect. Réessayez.");
+    // Chargement des images
+    const shellImg = new Image();
+    shellImg.src = 'https://img.icons8.com/plasticine/100/000000/spiral-shell.png'; // Image du coquillage
+
+    const obstacleImg = new Image();
+    obstacleImg.src = 'https://img.icons8.com/plasticine/100/000000/coral.png'; // Image du corail (obstacle)
+
+    let shell = {
+        x: 50,
+        y: 150,
+        width: 50,
+        height: 50,
+        gravity: 1.5,
+        lift: -20,
+        velocity: 0
+    };
+
+    let obstacles = [];
+    let frame = 0;
+    let score = 0;
+    let gameOver = false;
+
+    function drawShell() {
+        ctx.drawImage(shellImg, shell.x, shell.y, shell.width, shell.height);
+    }
+
+    function drawObstacles() {
+        obstacles.forEach(obstacle => {
+            ctx.drawImage(obstacleImg, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+            obstacle.x -= 5;
+
+            // Collision
+            if (shell.x < obstacle.x + obstacle.width &&
+                shell.x + shell.width > obstacle.x &&
+                shell.y < obstacle.y + obstacle.height &&
+                shell.height + shell.y > obstacle.y) {
+                gameOver = true;
             }
+
+            // Score
+            if (obstacle.x + obstacle.width < 0) {
+                obstacles.shift();
+                score++;
+                document.getElementById("score").innerText = score;
+            }
+        });
+    }
+
+    function updateShell() {
+        shell.velocity += shell.gravity;
+        shell.y += shell.velocity;
+
+        if (shell.y + shell.height > canvas.height || shell.y < 0) {
+            gameOver = true;
         }
-    </script>
+    }
+
+    function createObstacle() {
+        let height = Math.floor(Math.random() * (canvas.height - 200)) + 50;
+        obstacles.push({
+            x: canvas.width,
+            y: height,
+            width: 50,
+            height: 200
+        });
+    }
+
+    function resetGame() {
+        shell.y = 150;
+        shell.velocity = 0;
+        obstacles = [];
+        score = 0;
+        frame = 0;
+        gameOver = false;
+    }
+
+    function gameLoop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (gameOver) {
+            ctx.font = "48px Georgia";
+            ctx.fillStyle = "white";
+            ctx.fillText("Game Over", canvas.width / 2 - 120, canvas.height / 2);
+            ctx.fillText("Cliquez pour recommencer", canvas.width / 2 - 220, canvas.height / 2 + 50);
+            canvas.addEventListener("click", resetGame, { once: true });
+            return;
+        }
+
+        drawShell();
+        drawObstacles();
+        updateShell();
+
+        frame++;
+        if (frame % 120 === 0) {
+            createObstacle();
+        }
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    canvas.addEventListener("click", () => {
+        shell.velocity = shell.lift;
+    });
+
+    shellImg.onload = () => {
+        gameLoop();
+    };
+</script>
+
 </body>
 </html>
