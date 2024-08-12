@@ -3,19 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flappy Shell - Coquillage Volant</title>
+    <title>Flappy Shell Simplifié</title>
     <style>
         body {
             margin: 0;
             padding: 0;
             overflow: hidden;
             font-family: 'Georgia', serif;
-            background-color: #000;
+            background-color: #87CEEB; /* Couleur de fond de type ciel */
         }
 
         #gameCanvas {
-            background: url('https://i.imgur.com/4HJbzEq.jpg') no-repeat center center;
-            background-size: cover;
+            background-color: #87CEEB;
             display: block;
             margin: 0 auto;
         }
@@ -43,25 +42,16 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // Chargement des images
-    const shellImg = new Image();
-    shellImg.src = 'https://img.icons8.com/plasticine/100/000000/spiral-shell.png'; // Image du coquillage
-
-    const obstacleImg = new Image();
-    obstacleImg.src = 'https://img.icons8.com/plasticine/100/000000/coral.png'; // Image du corail (obstacle)
-
-    shellImg.onload = () => {
-        gameLoop();
-    };
-
+    // Coquillage simple (rectangle)
     let shell = {
         x: 50,
         y: 150,
-        width: 50,
-        height: 50,
+        width: 30,
+        height: 30,
         gravity: 1.5,
         lift: -20,
-        velocity: 0
+        velocity: 0,
+        color: '#FF4500' // Coquillage rouge
     };
 
     let obstacles = [];
@@ -70,12 +60,14 @@
     let gameOver = false;
 
     function drawShell() {
-        ctx.drawImage(shellImg, shell.x, shell.y, shell.width, shell.height);
+        ctx.fillStyle = shell.color;
+        ctx.fillRect(shell.x, shell.y, shell.width, shell.height);
     }
 
     function drawObstacles() {
+        ctx.fillStyle = '#228B22'; // Vert forêt pour les obstacles
         obstacles.forEach(obstacle => {
-            ctx.drawImage(obstacleImg, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+            ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
             obstacle.x -= 5;
 
             // Collision
@@ -163,6 +155,8 @@
     canvas.addEventListener("touchstart", () => {
         shell.velocity = shell.lift;
     });
+
+    gameLoop(); // Lancer le jeu
 </script>
 
 </body>
