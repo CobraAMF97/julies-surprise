@@ -20,115 +20,124 @@
             background-color: #111;
             position: relative;
         }
-        #scoreboard {
-            position: absolute;
-            top: 10px;
-            left: 10px;
+        #errorMessage {
             color: white;
             font-size: 24px;
-            z-index: 10;
+            text-align: center;
+            display: none; /* Masqué par défaut */
         }
     </style>
 </head>
 <body>
 
 <canvas id="gameCanvas"></canvas>
-<div id="scoreboard">Score: <span id="score">0</span></div>
+<div id="errorMessage">Cette page ne peut être ouverte que sur un appareil mobile.</div>
 
 <script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const boxSize = 20;
-    let snake = [{x: boxSize * 5, y: boxSize * 5}];
-    let direction = {x: boxSize, y: 0};
-    let food = {x: boxSize * Math.floor(Math.random() * 15), y: boxSize * Math.floor(Math.random() * 15)};
-    let gameInterval;
-    let score = 0;
-    const maxScore = 2001;  // Score à atteindre pour gagner
-
-    canvas.width = boxSize * 20;
-    canvas.height = boxSize * 20;
-
-    function drawBox(x, y, color) {
-        ctx.fillStyle = color;
-        ctx.fillRect(x, y, boxSize, boxSize);
+    function isMobileDevice() {
+        return /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
     }
 
-    function drawSnake() {
-        snake.forEach(segment => drawBox(segment.x, segment.y, 'green'));
-    }
+    if (!isMobileDevice()) {
+        // Afficher le message d'erreur et masquer le canvas du jeu
+        document.getElementById('gameCanvas').style.display = 'none';
+        document.getElementById('errorMessage').style.display = 'block';
+    } else {
+        // Code du jeu Snake
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const boxSize = 20;
+        let snake = [{x: boxSize * 5, y: boxSize * 5}];
+        let direction = {x: boxSize, y: 0};
+        let food = {x: boxSize * Math.floor(Math.random() * 15), y: boxSize * Math.floor(Math.random() * 15)};
+        let gameInterval;
+        let score = 0;
+        const maxScore = 2001;  // Score à atteindre pour gagner
 
-    function drawFood() {
-        drawBox(food.x, food.y, 'red');
-    }
+        canvas.width = boxSize * 20;
+        canvas.height = boxSize * 20;
 
-    function moveSnake() {
-        const newHead = {x: snake[0].x + direction.x, y: snake[0].y + direction.y};
-        snake.unshift(newHead);
+        function drawBox(x, y, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, boxSize, boxSize);
+        }
 
-        if (newHead.x === food.x && newHead.y === food.y) {
-            food = {x: boxSize * Math.floor(Math.random() * 15), y: boxSize * Math.floor(Math.random() * 15)};
-            score += 100;  // Ajouter 100 points au score
-            document.getElementById('score').innerText = score;
+        function drawSnake() {
+            snake.forEach(segment => drawBox(segment.x, segment.y, 'green'));
+        }
 
-            // Vérification de la condition de victoire
-            if (score >= maxScore) {
-                clearInterval(gameInterval);
-                alert('Félicitations ! Vous avez gagné !');
+        function drawFood() {
+            drawBox(food.x, food.y, 'red');
+        }
+
+        function moveSnake() {
+            const newHead = {x: snake[0].x + direction.x, y: snake[0].y + direction.y};
+            snake.unshift(newHead);
+
+            if (newHead.x === food.x && newHead.y === food.y) {
+                food = {x: boxSize * Math.floor(Math.random() * 15), y: boxSize * Math.floor(Math.random() * 15)};
+                score += 100;  // Ajouter 100 points au score
+                document.getElementById('score').innerText = score;
+
+                // Vérification de la condition de victoire
+                if (score >= maxScore) {
+                    clearInterval(gameInterval);
+                    alert('Félicitations ! Vous avez gagné !');
+                }
+            } else {
+                snake.pop();
             }
-        } else {
-            snake.pop();
         }
-    }
 
-    function checkCollision() {
-        const head = snake[0];
-        if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
-            return true;
-        }
-        for (let i = 1; i < snake.length; i++) {
-            if (head.x === snake[i].x && head.y === snake[i].y) {
+        function checkCollision() {
+            const head = snake[0];
+            if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
                 return true;
             }
+            for (let i = 1; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    return true;
+                }
+            }
+            return false;
         }
-        return false;
-    }
 
-    function update() {
-        moveSnake();
-        if (checkCollision()) {
-            clearInterval(gameInterval);
-            alert('Game Over');
+        function update() {
+            moveSnake();
+            if (checkCollision()) {
+                clearInterval(gameInterval);
+                alert('Game Over');
+            }
         }
-    }
 
-    function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawSnake();
-        drawFood();
-    }
-
-    function gameLoop() {
-        update();
-        draw();
-    }
-
-    // Ralentir le serpent en augmentant l'intervalle du jeu
-    gameInterval = setInterval(gameLoop, 150);
-
-    canvas.addEventListener('touchstart', (event) => {
-        const touch = event.touches[0];
-        const rect = canvas.getBoundingClientRect();
-        const touchX = touch.clientX - rect.left;
-        const touchY = touch.clientY - rect.top;
-
-        const head = snake[0];
-        if (Math.abs(touchX - head.x) > Math.abs(touchY - head.y)) {
-            direction = {x: touchX > head.x ? boxSize : -boxSize, y: 0};
-        } else {
-            direction = {x: 0, y: touchY > head.y ? boxSize : -boxSize};
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawSnake();
+            drawFood();
         }
-    });
+
+        function gameLoop() {
+            update();
+            draw();
+        }
+
+        // Ralentir le serpent en augmentant l'intervalle du jeu
+        gameInterval = setInterval(gameLoop, 150);
+
+        canvas.addEventListener('touchstart', (event) => {
+            const touch = event.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const touchX = touch.clientX - rect.left;
+            const touchY = touch.clientY - rect.top;
+
+            const head = snake[0];
+            if (Math.abs(touchX - head.x) > Math.abs(touchY - head.y)) {
+                direction = {x: touchX > head.x ? boxSize : -boxSize, y: 0};
+            } else {
+                direction = {x: 0, y: touchY > head.y ? boxSize : -boxSize};
+            }
+        });
+    }
 </script>
 
 </body>
