@@ -51,7 +51,7 @@
 <body>
 
 <!-- Musique de fond -->
-<audio id="background-music" autoplay loop>
+<audio id="background-music" loop>
     <source src="/mnt/data/Nathan Dawe x Bebe Rexha - Heart Still Beating (Official Visualiser).mp3" type="audio/mpeg">
     Votre navigateur ne supporte pas l'élément audio.
 </audio>
@@ -75,6 +75,13 @@
 
     function startGame() {
         document.getElementById('renarverButton').style.display = 'none';
+        
+        // Démarrer la musique lors de la première interaction
+        const music = document.getElementById('background-music');
+        document.body.addEventListener('touchstart', () => {
+            music.play();
+        }, { once: true });
+
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const boxSize = 20;
