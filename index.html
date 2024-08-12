@@ -13,25 +13,26 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #000;
+            background-color: #fff; /* Fond de couleur blanc */
             overflow: hidden;
             flex-direction: column;
             position: relative;
         }
         #gameCanvas {
-            background-color: #111;
+            background-color: #fff; /* Fond de couleur blanc */
             position: relative;
+            border: 1px solid #000;
         }
         #scoreboard {
             position: absolute;
             top: 10px;
             left: 10px;
-            color: white;
+            color: black;
             font-size: 24px;
             z-index: 10;
         }
         #errorMessage {
-            color: white;
+            color: black;
             font-size: 24px;
             text-align: center;
             display: none; /* Masqué par défaut */
@@ -76,9 +77,10 @@
 
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const boxSize = 18;  // Taille légèrement réduite
+        const boxSize = 25;  // Taille légèrement augmentée pour une meilleure résolution
         let snake = [{x: boxSize * 5, y: boxSize * 5}];
         let direction = {x: boxSize, y: 0};
+        let nextDirection = direction;  // Pour gérer la direction sans collisions opposées
         let food = {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)};
         let obstacles = [
             {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)},
@@ -89,7 +91,7 @@
         let score = 0;
         const maxScore = 2001;
 
-        canvas.width = boxSize * 20;  // Surface de jeu d'origine
+        canvas.width = boxSize * 20;  // Surface de jeu augmentée pour une meilleure résolution
         canvas.height = boxSize * 20;
 
         function drawEmoji(x, y, emoji) {
@@ -98,7 +100,7 @@
         }
 
         function drawSnake() {
-            snake.forEach(segment => drawEmoji(segment.x, segment.y, '⬜'));
+            snake.forEach(segment => drawEmoji(segment.x, segment.y, '⬛'));  // Serpent noir
         }
 
         function drawFood() {
@@ -110,6 +112,7 @@
         }
 
         function moveSnake() {
+            direction = nextDirection;  // Appliquer la direction validée
             const newHead = {x: snake[0].x + direction.x, y: snake[0].y + direction.y};
             snake.unshift(newHead);
 
@@ -184,10 +187,12 @@
 
             if (Math.abs(touchX - centerX) > Math.abs(touchY - centerY)) {
                 // Mouvement horizontal
-                direction = touchX > centerX ? {x: boxSize, y: 0} : {x: -boxSize, y: 0};
+                const newDirection = touchX > centerX ? {x: boxSize, y: 0} : {x: -boxSize, y: 0};
+                if (newDirection.x !== -direction.x) nextDirection = newDirection;  // Éviter les collisions opposées
             } else {
                 // Mouvement vertical
-                direction = touchY > centerY ? {x: 0, y: boxSize} : {x: 0, y: -boxSize};
+                const newDirection = touchY > centerY ? {x: 0, y: boxSize} : {x: 0, y: -boxSize};
+                if (newDirection.y !== -direction.y) nextDirection = newDirection;  // Éviter les collisions opposées
             }
         });
 
