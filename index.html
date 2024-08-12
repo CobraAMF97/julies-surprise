@@ -19,8 +19,10 @@
             position: relative;
         }
         #gameCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
             background-color: #000; /* Fond de couleur noir */
-            position: relative;
             border: 1px solid #fff;
         }
         #scoreboard {
@@ -47,12 +49,22 @@
             color: white;
             border: none;
             border-radius: 5px;
+            z-index: 10;
+        }
+        #confettiCanvas, #booCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 20;
         }
     </style>
 </head>
 <body>
 
 <canvas id="gameCanvas"></canvas>
+<canvas id="confettiCanvas"></canvas>
+<canvas id="booCanvas"></canvas>
 <div id="scoreboard">Score: <span id="score">0</span></div>
 <div id="errorMessage">Cette page ne peut être ouverte que sur un appareil mobile.</div>
 <button id="renarverButton" onclick="restartGame()">Renarver</button>
@@ -66,9 +78,6 @@
         document.getElementById('gameCanvas').style.display = 'none';
         document.getElementById('errorMessage').style.display = 'block';
     } else {
-        // Afficher le tutoriel au début du jeu
-        alert("Bienvenue dans la quête du Serpent Sage !\n\nPour guider le serpent, il te suffit de toucher l'écran :\n- Touche à gauche de l'écran pour aller à gauche\n- Touche à droite pour aller à droite\n- Touche en haut pour monter\n- Touche en bas pour descendre\n\nFacile, non ? Mais attention aux murs et aux bombes 💣...");
-
         startGame();
     }
 
@@ -76,7 +85,11 @@
         document.getElementById('renarverButton').style.display = 'none';
 
         const canvas = document.getElementById('gameCanvas');
+        const confettiCanvas = document.getElementById('confettiCanvas');
+        const booCanvas = document.getElementById('booCanvas');
         const ctx = canvas.getContext('2d');
+        const confettiCtx = confettiCanvas.getContext('2d');
+        const booCtx = booCanvas.getContext('2d');
         const boxSize = 25;  // Taille augmentée pour une meilleure résolution
         let snake = [{x: boxSize * 5, y: boxSize * 5}];
         let direction = {x: boxSize, y: 0};
@@ -92,8 +105,18 @@
         const maxScore = 2001;
         let headAnimationCounter = 0; // Pour gérer l'animation
 
-        canvas.width = boxSize * 20;  // Surface de jeu augmentée pour une meilleure résolution
-        canvas.height = boxSize * 20;
+        // Ajuster la taille du canvas pour occuper tout l'écran
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+            booCanvas.width = window.innerWidth;
+            booCanvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
         function drawEmoji(x, y, emoji) {
             ctx.font = boxSize + 'px Arial';
@@ -144,8 +167,11 @@
 
                 if (score >= maxScore) {
                     clearInterval(gameInterval);
-                    alert("Félicitations, Julie ! Le serpent sait maintenant que tu es digne de connaître le mot de passe. Le voici : CAPDES3ANS. Utilise-le pour découvrir le trésor caché.");
-                    document.getElementById('renarverButton').style.display = 'block';
+                    showConfetti();
+                    setTimeout(() => {
+                        alert("Félicitations, Julie ! Le serpent sait maintenant que tu es digne de connaître le mot de passe. Le voici : CAPDES3ANS. Utilise-le pour découvrir le trésor caché.");
+                        document.getElementById('renarverButton').style.display = 'block';
+                    }, 1000);
                 }
             } else {
                 snake.pop();
@@ -174,8 +200,11 @@
             moveSnake();
             if (checkCollision()) {
                 clearInterval(gameInterval);
-                alert('Game Over');
-                document.getElementById('renarverButton').style.display = 'block';
+                showBooAnimation();
+                setTimeout(() => {
+                    alert('Bouuuh t\'es nul');
+                    document.getElementById('renarverButton').style.display = 'block';
+                }, 1000);
             }
         }
 
@@ -211,6 +240,23 @@
         });
 
         gameInterval = setInterval(gameLoop, 150);
+
+        // Fonction pour afficher l'animation de confettis
+        function showConfetti() {
+            confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            for (let i = 0; i < 100; i++) {
+                confettiCtx.fillStyle = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                confettiCtx.fillRect(Math.random() * confettiCanvas.width, Math.random() * confettiCanvas.height, 10, 10);
+            }
+        }
+
+        // Fonction pour afficher l'animation "Bouuuh t'es nul"
+        function showBooAnimation() {
+            booCtx.clearRect(0, 0, booCanvas.width, booCanvas.height);
+            booCtx.font = 'bold 50px Arial';
+            booCtx.fillStyle = 'red';
+            booCtx.fillText('Bouuuh t\'es nul', booCanvas.width / 2 - 150, booCanvas.height / 2);
+        }
     }
 
     function restartGame() {
