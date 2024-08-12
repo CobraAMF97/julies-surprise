@@ -68,7 +68,7 @@
 
         if (newHead.x === food.x && newHead.y === food.y) {
             food = {x: boxSize * Math.floor(Math.random() * 15), y: boxSize * Math.floor(Math.random() * 15)};
-            score++;
+            score += 100;  // Ajouter 100 points au score
             document.getElementById('score').innerText = score;
 
             // Vérification de la condition de victoire
