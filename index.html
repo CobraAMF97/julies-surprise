@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu de Mémoire</title>
+    <title>Jeu de Mémoire - 26 Cartes</title>
     <style>
         body {
             font-family: 'Georgia', serif;
@@ -15,14 +15,14 @@
             background-color: #f0f0f0;
         }
         #memory-game {
-            width: 320px;
+            width: 500px;
             display: flex;
             flex-wrap: wrap;
         }
         .card {
             width: 75px;
             height: 75px;
-            margin: 10px;
+            margin: 5px;
             background-color: #2e3d49;
             display: flex;
             justify-content: center;
@@ -65,7 +65,12 @@
 </div>
 
 <script>
-    const symbols = ['🌟', '🌟', '🎵', '🎵', '🎀', '🎀', '🍀', '🍀'];
+    const symbols = [
+        '🌟', '🌟', '🎵', '🎵', '🎀', '🎀', '🍀', '🍀', 
+        '🚀', '🚀', '👑', '👑', '💎', '💎', '🦄', '🦄', 
+        '🔥', '🔥', '⚡', '⚡', '🌙', '🌙', '🌈', '🌈', 
+        '🐱', '🐱' // 13 paires = 26 cartes
+    ];
     let cards = [];
     let flippedCards = [];
     let matchedPairs = 0;
