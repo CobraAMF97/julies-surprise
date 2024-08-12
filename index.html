@@ -50,6 +50,10 @@
     const obstacleImg = new Image();
     obstacleImg.src = 'https://img.icons8.com/plasticine/100/000000/coral.png'; // Image du corail (obstacle)
 
+    shellImg.onload = () => {
+        gameLoop();
+    };
+
     let shell = {
         x: 50,
         y: 150,
@@ -159,11 +163,8 @@
     canvas.addEventListener("click", () => {
         shell.velocity = shell.lift;
     });
-
-    shellImg.onload = () => {
-        gameLoop();
-    };
 </script>
 
 </body>
 </html>
+
