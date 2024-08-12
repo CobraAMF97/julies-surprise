@@ -66,7 +66,7 @@
         document.getElementById('errorMessage').style.display = 'block';
     } else {
         // Afficher le tutoriel au début du jeu
-        alert("Bienvenue dans la quête du Serpent Sage !\n\nPour guider le serpent, il te suffit de toucher l'écran :\n- Touche à gauche de l'écran pour aller à gauche\n- Touche à droite pour aller à droite\n- Touche en haut pour monter\n- Touche en bas pour descendre\n\nFacile, non ? Mais attention aux murs et à l'obstacle rouge...");
+        alert("Bienvenue dans la quête du Serpent Sage !\n\nPour guider le serpent, il te suffit de toucher l'écran :\n- Touche à gauche de l'écran pour aller à gauche\n- Touche à droite pour aller à droite\n- Touche en haut pour monter\n- Touche en bas pour descendre\n\nFacile, non ? Mais attention aux murs et aux obstacles rouges...");
 
         startGame();
     }
@@ -80,7 +80,11 @@
         let snake = [{x: boxSize * 5, y: boxSize * 5}];
         let direction = {x: boxSize, y: 0};
         let food = {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)};
-        let obstacle = {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)};
+        let obstacles = [
+            {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)},
+            {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)},
+            {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)}
+        ];
         let gameInterval;
         let score = 0;
         const maxScore = 2001;
@@ -101,8 +105,8 @@
             drawBox(food.x, food.y, 'green');
         }
 
-        function drawObstacle() {
-            drawBox(obstacle.x, obstacle.y, 'red');
+        function drawObstacles() {
+            obstacles.forEach(obstacle => drawBox(obstacle.x, obstacle.y, 'red'));
         }
 
         function moveSnake() {
@@ -114,8 +118,10 @@
                 score += 100;
                 document.getElementById('score').innerText = score;
 
-                // Déplacer l'obstacle rouge de manière aléatoire
-                obstacle = {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)};
+                // Déplacer les obstacles rouges de manière aléatoire
+                obstacles = obstacles.map(obstacle => {
+                    return {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)};
+                });
 
                 showStoryMessage();
 
@@ -139,8 +145,10 @@
                     return true;
                 }
             }
-            if (head.x === obstacle.x && head.y === obstacle.y) {
-                return true;
+            for (let i = 0; i < obstacles.length; i++) {
+                if (head.x === obstacles[i].x && head.y === obstacles[i].y) {
+                    return true;
+                }
             }
             return false;
         }
@@ -158,7 +166,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawSnake();
             drawFood();
-            drawObstacle();
+            drawObstacles();
         }
 
         function gameLoop() {
