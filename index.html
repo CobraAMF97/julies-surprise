@@ -113,20 +113,20 @@
 
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const boxSize = 15;  // Taille réduite
-        let snake = [{x: boxSize * 10, y: boxSize * 10}];
+        const boxSize = 18;  // Taille légèrement réduite
+        let snake = [{x: boxSize * 5, y: boxSize * 5}];
         let direction = {x: boxSize, y: 0};
-        let food = {x: boxSize * Math.floor(Math.random() * 30), y: boxSize * Math.floor(Math.random() * 30)};
+        let food = {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)};
         let obstacles = [
-            {x: boxSize * 15, y: boxSize * 15},
-            {x: boxSize * 20, y: boxSize * 25}
+            {x: boxSize * 10, y: boxSize * 10},
+            {x: boxSize * 15, y: boxSize * 15}
         ];
         let gameInterval;
         let score = 0;
         const maxScore = 2001;
 
-        canvas.width = boxSize * 40;  // Surface de jeu plus grande
-        canvas.height = boxSize * 40;
+        canvas.width = boxSize * 20;  // Surface de jeu d'origine
+        canvas.height = boxSize * 20;
 
         function drawBox(x, y, color) {
             ctx.fillStyle = color;
@@ -150,7 +150,7 @@
             snake.unshift(newHead);
 
             if (newHead.x === food.x && newHead.y === food.y) {
-                food = {x: boxSize * Math.floor(Math.random() * 30), y: boxSize * Math.floor(Math.random() * 30)};
+                food = {x: boxSize * Math.floor(Math.random() * 20), y: boxSize * Math.floor(Math.random() * 20)};
                 score += 100;
                 document.getElementById('score').innerText = score;
 
