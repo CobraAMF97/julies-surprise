@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu de Mémoire - 26 Cartes</title>
+    <title>Jeu de Réflexes Amélioré</title>
     <style>
         body {
             font-family: 'Georgia', serif;
@@ -14,26 +14,28 @@
             margin: 0;
             background-color: #f0f0f0;
         }
-        #memory-game {
-            width: 500px;
-            display: flex;
-            flex-wrap: wrap;
-        }
-        .card {
-            width: 75px;
-            height: 75px;
-            margin: 5px;
-            background-color: #2e3d49;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2em;
-            color: white;
-            cursor: pointer;
-        }
-        .card.flipped {
+        #game-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border: 2px solid #333;
             background-color: #fff;
-            color: #2e3d49;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+        }
+        #target-button {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background-color: #FF4500;
+            color: #fff;
+            font-size: 1.5em;
+            text-align: center;
+            line-height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
         }
         #password-container {
             display: none;
@@ -44,82 +46,60 @@
             padding: 10px;
             margin-top: 20px;
             font-size: 1.1em;
+            border-radius: 8px;
+            border: 1px solid #ccc;
         }
         button {
             padding: 10px 20px;
             font-size: 1.1em;
             cursor: pointer;
             margin-top: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        button:hover {
+            background-color: #218838;
         }
     </style>
 </head>
 <body>
 
-<div id="memory-game">
-    <!-- Cartes générées par JavaScript -->
+<div id="game-container">
+    <div id="target-button">💥</div>
 </div>
 <div id="password-container">
-    <p>Vous avez trouvé toutes les paires ! Entrez le mot de passe :</p>
+    <p>Score atteint ! Entrez le mot de passe :</p>
     <input type="password" id="password-input" placeholder="Mot de passe">
     <button onclick="checkPassword()">Déverrouiller</button>
 </div>
 
 <script>
-    const symbols = [
-        '🌟', '🌟', '🎵', '🎵', '🎀', '🎀', '🍀', '🍀', 
-        '🚀', '🚀', '👑', '👑', '💎', '💎', '🦄', '🦄', 
-        '🔥', '🔥', '⚡', '⚡', '🌙', '🌙', '🌈', '🌈', 
-        '🐱', '🐱' // 13 paires = 26 cartes
-    ];
-    let cards = [];
-    let flippedCards = [];
-    let matchedPairs = 0;
+    const targetButton = document.getElementById('target-button');
+    const gameContainer = document.getElementById('game-container');
+    let score = 0;
+    const maxScore = 10; // Augmentation du score maximum pour plus de challenge
 
-    function shuffle(array) {
-        array.sort(() => Math.random() - 0.5);
+    function moveButton() {
+        const x = Math.random() * (gameContainer.offsetWidth - targetButton.offsetWidth);
+        const y = Math.random() * (gameContainer.offsetHeight - targetButton.offsetHeight);
+        targetButton.style.left = `${x}px`;
+        targetButton.style.top = `${y}px`;
+        targetButton.style.display = 'block';
     }
 
-    function createBoard() {
-        const board = document.getElementById('memory-game');
-        shuffle(symbols);
-        for (let i = 0; i < symbols.length; i++) {
-            const card = document.createElement('div');
-            card.classList.add('card');
-            card.dataset.symbol = symbols[i];
-            card.innerText = '?';
-            card.addEventListener('click', flipCard);
-            board.appendChild(card);
-            cards.push(card);
-        }
-    }
-
-    function flipCard() {
-        if (this.classList.contains('flipped') || flippedCards.length === 2) return;
-        this.innerText = this.dataset.symbol;
-        this.classList.add('flipped');
-        flippedCards.push(this);
-
-        if (flippedCards.length === 2) {
-            setTimeout(checkMatch, 1000);
-        }
-    }
-
-    function checkMatch() {
-        const [card1, card2] = flippedCards;
-        if (card1.dataset.symbol === card2.dataset.symbol) {
-            matchedPairs++;
-            flippedCards = [];
-            if (matchedPairs === symbols.length / 2) {
-                document.getElementById('password-container').style.display = 'block';
-            }
+    targetButton.addEventListener('click', () => {
+        score++;
+        targetButton.style.display = 'none';
+        if (score >= maxScore) {
+            document.getElementById('password-container').style.display = 'block';
+            gameContainer.style.display = 'none';
         } else {
-            card1.innerText = '?';
-            card2.innerText = '?';
-            card1.classList.remove('flipped');
-            card2.classList.remove('flipped');
-            flippedCards = [];
+            setTimeout(moveButton, 1000);
         }
-    }
+    });
 
     function checkPassword() {
         const input = document.getElementById("password-input").value;
@@ -131,7 +111,7 @@
         }
     }
 
-    createBoard();
+    setTimeout(moveButton, 1000);
 </script>
 
 </body>
