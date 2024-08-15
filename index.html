@@ -59,11 +59,6 @@
 </head>
 <body>
 
-<audio id="backgroundMusic" loop>
-    <source src="Nathan_Dawe_x_Bebe_Rexha_-_Heart_Still_Beating_Official_Visualiser.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-</audio>
-
 <canvas id="gameCanvas"></canvas>
 <canvas id="confettiCanvas"></canvas>
 <canvas id="booCanvas"></canvas>
@@ -102,10 +97,6 @@
         let score = 0;
         const maxScore = 2000;  // Score de victoire fixé à 2000
         let headAnimationCounter = 0; // Pour gérer l'animation
-
-        // Démarrer la musique de fond
-        const backgroundMusic = document.getElementById('backgroundMusic');
-        backgroundMusic.play();
 
         // Ajuster la taille du canvas pour être plus petite
         canvas.width = boxSize * 15;  // Surface réduite pour mieux s'adapter à l'écran
@@ -186,7 +177,6 @@
                     setTimeout(() => {
                         alert("Félicitations, Julie ! Le serpent sait maintenant que tu es digne de connaître le mot de passe. Le voici : CAPDES3ANS. Utilise-le pour découvrir le trésor caché.");
                         document.getElementById('renarverButton').style.display = 'block';
-                        backgroundMusic.pause();  // Arrêter la musique de fond à la victoire
                     }, 1000);
                 }
             } else {
@@ -219,7 +209,6 @@
                 showBooAnimation();
                 setTimeout(() => {
                     document.getElementById('renarverButton').style.display = 'block';
-                    backgroundMusic.pause();  // Arrêter la musique de fond à la défaite
                 }, 1000);
             }
         }
@@ -241,3 +230,14 @@
             const touchX = event.touches[0].clientX;
             const touchY = event.touches[0].clientY;
             const rect = canvas.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            if (Math.abs(touchX - centerX) > Math.abs(touchY - centerY)) {
+                // Mouvement horizontal
+                const newDirection = touchX > centerX ? {x: boxSize, y: 0} : {x: -boxSize, y: 0};
+                if (newDirection.x !== -direction.x) nextDirection = newDirection;  // Éviter les collisions opposées
+            } else {
+                // Mouvement vertical
+                const newDirection = touchY > centerY ? {x: 0, y: boxSize} : {x: 0, y: -boxSize};
+               
