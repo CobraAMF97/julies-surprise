@@ -30,6 +30,17 @@
             font-size: 24px;
             z-index: 10;
         }
+        #message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 24px;
+            z-index: 10;
+            display: none;
+            text-align: center;
+        }
         #errorMessage {
             color: white;
             font-size: 24px;
@@ -54,6 +65,7 @@
 
 <canvas id="gameCanvas"></canvas>
 <div id="scoreboard">Score: <span id="score">0</span></div>
+<div id="message">Oh non ta copine Hélène essaye d’être à nouveau ton amie ! Fuis ses obstacles pour continuer ton chemin</div>
 <div id="errorMessage">Cette page ne peut être ouverte que sur un appareil mobile.</div>
 <button id="renarverButton" onclick="restartGame()">Renarver</button>
 
@@ -79,10 +91,12 @@
         let direction = {x: boxSize, y: 0};
         let nextDirection = direction;
         let food = {x: boxSize * Math.floor(Math.random() * 15), y: boxSize * Math.floor(Math.random() * 15)};
+        let obstacles = [];  // Liste des obstacles rouges
         let gameInterval;
         let score = 0;
         const maxScore = 2000;
         let headAnimationCounter = 0;
+        let showMessage = false;
 
         // Configure the canvas size
         canvas.width = boxSize * 15;
@@ -107,6 +121,10 @@
             drawSquare(food.x, food.y, 'green');
         }
 
+        function drawObstacles() {
+            obstacles.forEach(obstacle => drawSquare(obstacle.x, obstacle.y, 'red'));
+        }
+
         function moveSnake() {
             direction = nextDirection;
             const newHead = {x: snake[0].x + direction.x, y: snake[0].y + direction.y};
@@ -125,10 +143,31 @@
                             break;
                         }
                     }
+
+                    // Vérifier que la nourriture ne réapparaît pas sur un obstacle
+                    for (let i = 0; i < obstacles.length; i++) {
+                        if (food.x === obstacles[i].x && food.y === obstacles[i].y) {
+                            validFoodPosition = false;
+                            break;
+                        }
+                    }
                 }
 
                 score += 100;
                 document.getElementById('score').innerText = score;
+
+                // À partir d'un score de 300, afficher un message et ajouter des obstacles rouges
+                if (score === 300 && !showMessage) {
+                    showMessage = true;
+                    document.getElementById('message').style.display = 'block';
+                    setTimeout(() => {
+                        document.getElementById('message').style.display = 'none';
+                        // Générer deux obstacles rouges à chaque fois que le serpent mange l'objet vert
+                        addObstacles();
+                    }, 3000);
+                } else if (score > 300) {
+                    addObstacles();
+                }
 
                 // Activer l'animation de la tête du serpent
                 headAnimationCounter = 5;
@@ -153,7 +192,45 @@
                     return true;
                 }
             }
+            for (let i = 0; i < obstacles.length; i++) {
+                if (head.x === obstacles[i].x && head.y === obstacles[i].y) {
+                    return true;
+                }
+            }
             return false;
+        }
+
+        function addObstacles() {
+            obstacles = [];  // Réinitialiser la liste des obstacles
+
+            // Ajouter deux obstacles rouges à des positions aléatoires
+            for (let i = 0; i < 2; i++) {
+                let validObstaclePosition = false;
+                while (!validObstaclePosition) {
+                    const newObstacle = {
+                        x: boxSize * Math.floor(Math.random() * 15),
+                        y: boxSize * Math.floor(Math.random() * 15)
+                    };
+                    validObstaclePosition = true;
+
+                    // Vérifier que l'obstacle ne réapparaît pas sur le serpent
+                    for (let j = 0; j < snake.length; j++) {
+                        if (newObstacle.x === snake[j].x && newObstacle.y === snake[j].y) {
+                            validObstaclePosition = false;
+                            break;
+                        }
+                    }
+
+                    // Vérifier que l'obstacle ne réapparaît pas sur la nourriture
+                    if (newObstacle.x === food.x && newObstacle.y === food.y) {
+                        validObstaclePosition = false;
+                    }
+
+                    if (validObstaclePosition) {
+                        obstacles.push(newObstacle);
+                    }
+                }
+            }
         }
 
         function update() {
@@ -169,6 +246,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawSnake();
             drawFood();
+            drawObstacles();
         }
 
         function gameLoop() {
@@ -181,25 +259,4 @@
             const touchX = event.touches[0].clientX;
             const touchY = event.touches[0].clientY;
             const rect = canvas.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-
-            if (Math.abs(touchX - centerX) > Math.abs(touchY - centerY)) {
-                const newDirection = touchX > centerX ? {x: boxSize, y: 0} : {x: -boxSize, y: 0};
-                if (newDirection.x !== -direction.x) nextDirection = newDirection;
-            } else {
-                const newDirection = touchY > centerY ? {x: 0, y: boxSize} : {x: 0, y: -boxSize};
-                if (newDirection.y !== -direction.y) nextDirection = newDirection;
-            }
-        });
-
-        gameInterval = setInterval(gameLoop, 150);
-    }
-
-    function restartGame() {
-        startGame();
-    }
-</script>
-
-</body>
-</html>
+            const centerX = rect.left + rect.width
