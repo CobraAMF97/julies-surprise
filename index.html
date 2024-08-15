@@ -13,13 +13,13 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #000; /* Fond de couleur noir */
+            background-color: #000;
             overflow: hidden;
             flex-direction: column;
             position: relative;
         }
         #gameCanvas {
-            background-color: #000; /* Fond de couleur noir */
+            background-color: #000;
             border: 1px solid #fff;
         }
         #scoreboard {
@@ -34,7 +34,7 @@
             color: white;
             font-size: 24px;
             text-align: center;
-            display: none; /* Masqué par défaut */
+            display: none;
         }
         #renarverButton {
             display: none;
@@ -147,7 +147,28 @@
             snake.unshift(newHead);
 
             if (newHead.x === food.x && newHead.y === food.y) {
-                food = {x: boxSize * Math.floor(Math.random() * 12), y: boxSize * Math.floor(Math.random() * 12)};
+                let validFoodPosition = false;
+                while (!validFoodPosition) {
+                    food = {x: boxSize * Math.floor(Math.random() * 12), y: boxSize * Math.floor(Math.random() * 12)};
+                    validFoodPosition = true;
+
+                    // Vérifier que la nourriture ne réapparaît pas sur le serpent
+                    for (let i = 0; i < snake.length; i++) {
+                        if (food.x === snake[i].x && food.y === snake[i].y) {
+                            validFoodPosition = false;
+                            break;
+                        }
+                    }
+
+                    // Vérifier que la nourriture ne réapparaît pas sur un obstacle
+                    for (let i = 0; i < obstacles.length; i++) {
+                        if (food.x === obstacles[i].x && food.y === obstacles[i].y) {
+                            validFoodPosition = false;
+                            break;
+                        }
+                    }
+                }
+
                 score += 100;
                 document.getElementById('score').innerText = score;
 
@@ -220,67 +241,3 @@
             const touchX = event.touches[0].clientX;
             const touchY = event.touches[0].clientY;
             const rect = canvas.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-
-            if (Math.abs(touchX - centerX) > Math.abs(touchY - centerY)) {
-                // Mouvement horizontal
-                const newDirection = touchX > centerX ? {x: boxSize, y: 0} : {x: -boxSize, y: 0};
-                if (newDirection.x !== -direction.x) nextDirection = newDirection;  // Éviter les collisions opposées
-            } else {
-                // Mouvement vertical
-                const newDirection = touchY > centerY ? {x: 0, y: boxSize} : {x: 0, y: -boxSize};
-                if (newDirection.y !== -direction.y) nextDirection = newDirection;  // Éviter les collisions opposées
-            }
-        });
-
-        gameInterval = setInterval(gameLoop, 150);
-
-        // Fonction pour afficher l'animation de confettis
-        function showConfetti() {
-            confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-            for (let i = 0; i < 100; i++) {
-                confettiCtx.fillStyle = `hsl(${Math.random() * 360}, 100%, 50%)`;
-                confettiCtx.fillRect(Math.random() * confettiCanvas.width, Math.random() * confettiCanvas.height, 10, 10);
-            }
-        }
-
-        // Fonction pour afficher l'animation "Bouuuh t'es nul"
-        function showBooAnimation() {
-            booCtx.clearRect(0, 0, booCanvas.width, booCanvas.height);
-            booCtx.font = 'bold 50px Arial';
-            booCtx.fillStyle = 'red';
-            booCtx.fillText('', booCanvas.width / 2 - 150, booCanvas.height / 2); // Plus de texte, juste l'animation
-        }
-
-        // Fonction pour spawner les obstacles loin du serpent
-        function spawnObstacles(count) {
-            const minDistance = boxSize * 3;  // Distance minimale entre la tête du serpent et un nouvel obstacle
-            let newObstacles = [];
-
-            while (newObstacles.length < count) {
-                let newObstacle = {
-                    x: boxSize * Math.floor(Math.random() * 12),
-                    y: boxSize * Math.floor(Math.random() * 12)
-                };
-
-                let distanceFromSnakeHead = Math.sqrt(
-                    Math.pow(newObstacle.x - snake[0].x, 2) + Math.pow(newObstacle.y - snake[0].y, 2)
-                );
-
-                if (distanceFromSnakeHead > minDistance) {
-                    newObstacles.push(newObstacle);
-                }
-            }
-
-            return newObstacles;
-        }
-    }
-
-    function restartGame() {
-        startGame();
-    }
-</script>
-
-</body>
-</html>
