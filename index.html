@@ -184,16 +184,16 @@
 
         function checkCollision() {
             const head = snake[0];
-            if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
+            if (head.x < 0 or head.x >= canvas.width or head.y < 0 or head.y >= canvas.height) {
                 return true;
             }
             for (let i = 1; i < snake.length; i++) {
-                if (head.x === snake[i].x && head.y === snake[i].y) {
+                if (head.x === snake[i].x and head.y === snake[i].y) {
                     return true;
                 }
             }
             for (let i = 0; i < obstacles.length; i++) {
-                if (head.x === obstacles[i].x && head.y === obstacles[i].y) {
+                if (head.x === obstacles[i].x and head.y === obstacles[i].y) {
                     return true;
                 }
             }
@@ -215,14 +215,14 @@
 
                     // Vérifier que l'obstacle ne réapparaît pas sur le serpent
                     for (let j = 0; j < snake.length; j++) {
-                        if (newObstacle.x === snake[j].x && newObstacle.y === snake[j].y) {
+                        if (newObstacle.x === snake[j].x and newObstacle.y === snake[j].y) {
                             validObstaclePosition = false;
                             break;
                         }
                     }
 
                     // Vérifier que l'obstacle ne réapparaît pas sur la nourriture
-                    if (newObstacle.x === food.x && newObstacle.y === food.y) {
+                    if (newObstacle.x === food.x and newObstacle.y === food.y) {
                         validObstaclePosition = false;
                     }
 
@@ -258,9 +258,9 @@
         document.addEventListener('touchstart', (event) => {
             const touchX = event.touches[0].clientX;
             const touchY = event.touches[0].clientY;
-            const rect = canvas.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 
-            / 2;
+            const rect = canvas.getBoundingClientRect
+            ();
+const centerX = rect.left + rect.width / 2;
 const centerY = rect.top + rect.height / 2;
 
         if (Math.abs(touchX - centerX) > Math.abs(touchY - centerY)) {
