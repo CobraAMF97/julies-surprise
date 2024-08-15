@@ -259,4 +259,31 @@
             const touchX = event.touches[0].clientX;
             const touchY = event.touches[0].clientY;
             const rect = canvas.getBoundingClientRect();
-            const centerX = rect.left + rect.width
+            const centerX = rect.left + rect.width / 
+            / 2;
+const centerY = rect.top + rect.height / 2;
+
+        if (Math.abs(touchX - centerX) > Math.abs(touchY - centerY)) {
+            // Mouvement horizontal
+            const newDirection = touchX > centerX ? {x: boxSize, y: 0} : {x: -boxSize, y: 0};
+            if (newDirection.x !== -direction.x) nextDirection = newDirection;  // Éviter les collisions opposées
+        } else {
+            // Mouvement vertical
+            const newDirection = touchY > centerY ? {x: 0, y: boxSize} : {x: 0, y: -boxSize};
+            if (newDirection.y !== -direction.y) nextDirection = newDirection;  // Éviter les collisions opposées
+        }
+    });
+
+    gameInterval = setInterval(gameLoop, 150);
+}
+
+function restartGame() {
+    startGame();
+}
+
+</script>
+
+
+</body>
+</html>
+```
