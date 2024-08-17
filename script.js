@@ -21,24 +21,60 @@ function startGame() {
 
     // Charger les images
     const snakeHeadUpImg = new Image();
-    snakeHeadUpImg.src = 'images/snake_head_up.png?v=1.0.3';
+    snakeHeadUpImg.src = 'images/snake_head_up.png?v=1.0.4';
+    snakeHeadUpImg.onload = function() {
+        console.log('snakeHeadUpImg loaded');
+    };
+
     const snakeHeadDownImg = new Image();
-    snakeHeadDownImg.src = 'images/snake_head_down.png?v=1.0.3';
+    snakeHeadDownImg.src = 'images/snake_head_down.png?v=1.0.4';
+    snakeHeadDownImg.onload = function() {
+        console.log('snakeHeadDownImg loaded');
+    };
+
     const snakeHeadLeftImg = new Image();
-    snakeHeadLeftImg.src = 'images/snake_head_left.png?v=1.0.3';
+    snakeHeadLeftImg.src = 'images/snake_head_left.png?v=1.0.4';
+    snakeHeadLeftImg.onload = function() {
+        console.log('snakeHeadLeftImg loaded');
+    };
+
     const snakeHeadRightImg = new Image();
-    snakeHeadRightImg.src = 'images/snake_head_right.png?v=1.0.3';
+    snakeHeadRightImg.src = 'images/snake_head_right.png?v=1.0.4';
+    snakeHeadRightImg.onload = function() {
+        console.log('snakeHeadRightImg loaded');
+    };
+
     const snakeBodyImg = new Image();
-    snakeBodyImg.src = 'images/snake_body.png?v=1.0.3';
+    snakeBodyImg.src = 'images/snake_body.png?v=1.0.4';
+    snakeBodyImg.onload = function() {
+        console.log('snakeBodyImg loaded');
+    };
+
     const snakeTailImg = new Image();
-    snakeTailImg.src = 'images/snake_tail.png?v=1.0.3';
+    snakeTailImg.src = 'images/snake_tail.png?v=1.0.4';
+    snakeTailImg.onload = function() {
+        console.log('snakeTailImg loaded');
+    };
+
     const foodImg = new Image();
-    foodImg.src = 'images/apple.png?v=1.0.3';
+    foodImg.src = 'images/apple.png?v=1.0.4';
+    foodImg.onload = function() {
+        console.log('foodImg loaded');
+    };
+
     const obstacleImg = new Image();
-    obstacleImg.src = 'images/rock.png?v=1.0.3';
+    obstacleImg.src = 'images/rock.png?v=1.0.4';
+    obstacleImg.onload = function() {
+        console.log('obstacleImg loaded');
+    };
 
     function drawSquare(x, y, img) {
-        ctx.drawImage(img, x, y, boxSize, boxSize);
+        if (img.complete) {
+            ctx.drawImage(img, x, y, boxSize, boxSize);
+        } else {
+            ctx.fillStyle = 'green'; // Fallback color
+            ctx.fillRect(x, y, boxSize, boxSize);
+        }
     }
 
     function getSnakeHeadImage() {
