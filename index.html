@@ -13,14 +13,16 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #000;
+            background: linear-gradient(135deg, #1a1a1d, #4e4e50);
             overflow: hidden;
             flex-direction: column;
             position: relative;
         }
         #gameCanvas {
-            background-color: #000;
+            background-color: #2b2b2b;
             border: 1px solid #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
         }
         #scoreboard {
             position: absolute;
@@ -28,7 +30,9 @@
             left: 10px;
             color: white;
             font-size: 24px;
+            font-family: 'Arial', sans-serif;
             z-index: 10;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
         #message {
             position: absolute;
@@ -40,6 +44,8 @@
             z-index: 10;
             display: none;
             text-align: center;
+            font-family: 'Arial', sans-serif;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
         #errorMessage {
             color: white;
@@ -56,16 +62,17 @@
             background-color: #007BFF;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 10px;
             z-index: 10;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
         }
         .game-over {
             animation: gameOverFlash 1s ease-out;
         }
         @keyframes gameOverFlash {
-            0% { background-color: #000; }
+            0% { background-color: #2b2b2b; }
             50% { background-color: #FF0000; }
-            100% { background-color: #000; }
+            100% { background-color: #2b2b2b; }
         }
     </style>
 </head>
@@ -77,7 +84,7 @@
 <div id="errorMessage">Cette page ne peut être ouverte que sur un appareil mobile.</div>
 <button id="renarverButton" onclick="restartGame()">Renarver</button>
 
-<script src="script.js?v=1.0.2" defer></script>
+<script src="script.js?v=1.0.3" defer></script>
 
 </body>
 </html>
