@@ -11,6 +11,10 @@ function showTutorial() {
     }
 }
 
+function sendVictoryMessage() {
+    window.parent.postMessage('victoryAchieved', '*');
+}
+
 function startGame() {
     document.getElementById('tutorial').style.display = 'none';
     document.getElementById('renarverButton').style.display = 'none';
@@ -102,6 +106,7 @@ function startGame() {
                 clearInterval(gameInterval);
                 alert("Félicitations, Julie ! Le serpent sait maintenant que tu es digne de connaître le mot de passe. Le voici : CAPDES3ANS. Utilise-le pour découvrir le trésor caché.");
                 document.getElementById('renarverButton').style.display = 'block';
+                sendVictoryMessage(); // Envoi du message de victoire
             }
         } else {
             snake.pop();
@@ -218,3 +223,4 @@ function restartGame() {
 
 // Afficher le tutoriel au démarrage
 showTutorial();
+
