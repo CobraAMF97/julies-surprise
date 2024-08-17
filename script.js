@@ -2,12 +2,7 @@ function isMobileDevice() {
     return /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
 }
 
-if (!isMobileDevice()) {
-    document.getElementById('gameCanvas').style.display = 'none';
-    document.getElementById('errorMessage').style.display = 'block';
-} else {
-    startGame();
-}
+startGame();
 
 function startGame() {
     document.getElementById('renarverButton').style.display = 'none';
@@ -175,6 +170,7 @@ function startGame() {
         draw();
     }
 
+    // Contrôles pour les appareils mobiles
     document.addEventListener('touchstart', (event) => {
         const touchX = event.touches[0].clientX;
         const touchY = event.touches[0].clientY;
@@ -188,6 +184,20 @@ function startGame() {
         } else {
             const newDirection = touchY > centerY ? {x: 0, y: boxSize} : {x: 0, y: -boxSize};
             if (newDirection.y !== -direction.y) nextDirection = newDirection;
+        }
+    });
+
+    // Contrôles pour les ordinateurs (flèches directionnelles)
+    document.addEventListener('keydown', (event) => {
+        const key = event.key;
+        let newDirection;
+        if (key === 'ArrowUp') newDirection = {x: 0, y: -boxSize};
+        else if (key === 'ArrowDown') newDirection = {x: 0, y: boxSize};
+        else if (key === 'ArrowLeft') newDirection = {x: -boxSize, y: 0};
+        else if (key === 'ArrowRight') newDirection = {x: boxSize, y: 0};
+
+        if (newDirection && (newDirection.x !== -direction.x || newDirection.y !== -direction.y)) {
+            nextDirection = newDirection;
         }
     });
 
