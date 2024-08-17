@@ -201,3 +201,5 @@ function startGame() {
 function restartGame() {
     startGame();
 }
+
+startGame();
