@@ -34,6 +34,30 @@
             z-index: 10;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
+        #tutorial {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 20px;
+            z-index: 20;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+        #tutorial button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 10px;
+        }
         #message {
             position: absolute;
             top: 50%;
@@ -80,6 +104,11 @@
 
 <canvas id="gameCanvas"></canvas>
 <div id="scoreboard">Score: <span id="score">0</span></div>
+<div id="tutorial">
+    <p id="tutorialText">Utilisez les flèches directionnelles pour diriger le serpent. Évitez les obstacles et mangez la nourriture pour grandir.</p>
+    <p id="difficultyNote">Note : Le jeu est plus facile à jouer sur un ordinateur.</p>
+    <button onclick="startGame()">Commencer le jeu</button>
+</div>
 <div id="message">Oh non ta copine Hélène essaye d’être à nouveau ton amie ! Fuis ses obstacles pour continuer ton chemin</div>
 <div id="errorMessage">Cette page ne peut être ouverte que sur un appareil mobile.</div>
 <button id="renarverButton" onclick="restartGame()">Renarver</button>
