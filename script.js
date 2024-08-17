@@ -11,10 +11,6 @@ function showTutorial() {
     }
 }
 
-function sendVictoryMessage() {
-    window.parent.postMessage('victoryAchieved', '*');
-}
-
 function startGame() {
     document.getElementById('tutorial').style.display = 'none';
     document.getElementById('renarverButton').style.display = 'none';
@@ -105,8 +101,7 @@ function startGame() {
             if (score >= maxScore) {
                 clearInterval(gameInterval);
                 alert("Félicitations, Julie ! Le serpent sait maintenant que tu es digne de connaître le mot de passe. Le voici : CAPDES3ANS. Utilise-le pour découvrir le trésor caché.");
-                document.getElementById('renarverButton').style.display = 'block';
-                sendVictoryMessage(); // Envoi du message de victoire
+                window.location.href = "https://b12.io/client/8RnHva1D/site_builder/";
             }
         } else {
             snake.pop();
@@ -115,106 +110,111 @@ function startGame() {
 
     function checkCollision() {
         const head = snake[0];
-        if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
+        if (Voici la suite du code JavaScript (`script.js`) :
+
+```javascript
+function checkCollision() {
+    const head = snake[0];
+    if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
+        return true;
+    }
+    for (let i = 1; i < snake.length; i++) {
+        if (head.x === snake[i].x && head.y === snake[i].y) {
             return true;
         }
-        for (let i = 1; i < snake.length; i++) {
-            if (head.x === snake[i].x && head.y === snake[i].y) {
-                return true;
-            }
-        }
-        for (let i = 0; i < obstacles.length; i++) {
-            if (head.x === obstacles[i].x && head.y === obstacles[i].y) {
-                return true;
-            }
-        }
-        return false;
     }
+    for (let i = 0; i < obstacles.length; i++) {
+        if (head.x === obstacles[i].x && head.y === obstacles[i].y) {
+            return true;
+        }
+    }
+    return false;
+}
 
-    function addObstacles() {
-        obstacles = [];
+function addObstacles() {
+    obstacles = [];
 
-        for (let i = 0; i < 2; i++) {
-            let validObstaclePosition = false;
-            while (!validObstaclePosition) {
-                const newObstacle = {
-                    x: boxSize * Math.floor(Math.random() * 15),
-                    y: boxSize * Math.floor(Math.random() * 15)
-                };
-                validObstaclePosition = true;
+    for (let i = 0; i < 2; i++) {
+        let validObstaclePosition = false;
+        while (!validObstaclePosition) {
+            const newObstacle = {
+                x: boxSize * Math.floor(Math.random() * 15),
+                y: boxSize * Math.floor(Math.random() * 15)
+            };
+            validObstaclePosition = true;
 
-                for (let j = 0; j < snake.length; j++) {
-                    if (newObstacle.x === snake[j].x && newObstacle.y === snake[j].y) {
-                        validObstaclePosition = false;
-                        break;
-                    }
-                }
-
-                if (newObstacle.x === food.x && newObstacle.y === food.y) {
+            for (let j = 0; j < snake.length; j++) {
+                if (newObstacle.x === snake[j].x && newObstacle.y === snake[j].y) {
                     validObstaclePosition = false;
+                    break;
                 }
+            }
 
-                if (validObstaclePosition) {
-                    obstacles.push(newObstacle);
-                }
+            if (newObstacle.x === food.x && newObstacle.y === food.y) {
+                validObstaclePosition = false;
+            }
+
+            if (validObstaclePosition) {
+                obstacles.push(newObstacle);
             }
         }
     }
+}
 
-    function update() {
-        moveSnake();
-        if (checkCollision()){
-            clearInterval(gameInterval);
-            document.body.classList.add('game-over');
-            alert("Game Over!");
-            document.getElementById('renarverButton').style.display = 'block';
-        }
+function update() {
+    moveSnake();
+    if (checkCollision()) {
+        clearInterval(gameInterval);
+        document.body.classList.add('game-over');
+        alert("Game Over!");
+        document.getElementById('renarverButton').style.display = 'block';
     }
+}
 
-    function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawSnake();
-        drawFood();
-        drawObstacles();
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawSnake();
+    drawFood();
+    drawObstacles();
+}
+
+function gameLoop() {
+    update();
+    draw();
+}
+
+// Contrôles pour les appareils mobiles
+document.addEventListener('touchstart', (event) => {
+    const touchX = event.touches[0].clientX;
+    const touchY = event.touches[0].clientY;
+    const rect = canvas.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    if (Math.abs(touchX - centerX) > Math.abs(touchY - centerY)) {
+        const newDirection = touchX > centerX ? {x: boxSize, y: 0} : {x: -boxSize, y: 0};
+        if (newDirection.x !== -direction.x) nextDirection = newDirection;
+    } else {
+        const newDirection = touchY > centerY ? {x: 0, y: boxSize} : {x: 0, y: -boxSize};
+        if (newDirection.y !== -direction.y) nextDirection = newDirection;
     }
+});
 
-    function gameLoop() {
-        update();
-        draw();
+// Contrôles pour les ordinateurs (flèches directionnelles)
+document.addEventListener('keydown', (event) => {
+    const key = event.key;
+    let newDirection;
+    if (key === 'ArrowUp') newDirection = {x: 0, y: -boxSize};
+    else if (key === 'ArrowDown') newDirection = {x: 0, y: boxSize};
+    else if (key === 'ArrowLeft') newDirection = {x: -boxSize, y: 0};
+    else if (key === 'ArrowRight') newDirection = {x: boxSize, y: 0};
+
+    if (newDirection && (newDirection.x !== -direction.x || newDirection.y !== -direction.y)) {
+        nextDirection = newDirection;
     }
+});
 
-    // Contrôles pour les appareils mobiles
-    document.addEventListener('touchstart', (event) => {
-        const touchX = event.touches[0].clientX;
-        const touchY = event.touches[0].clientY;
-        const rect = canvas.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-
-        if (Math.abs(touchX - centerX) > Math.abs(touchY - centerY)) {
-            const newDirection = touchX > centerX ? {x: boxSize, y: 0} : {x: -boxSize, y: 0};
-            if (newDirection.x !== -direction.x) nextDirection = newDirection;
-        } else {
-            const newDirection = touchY > centerY ? {x: 0, y: boxSize} : {x: 0, y: -boxSize};
-            if (newDirection.y !== -direction.y) nextDirection = newDirection;
-        }
-    });
-
-    // Contrôles pour les ordinateurs (flèches directionnelles)
-    document.addEventListener('keydown', (event) => {
-        const key = event.key;
-        let newDirection;
-        if (key === 'ArrowUp') newDirection = {x: 0, y: -boxSize};
-        else if (key === 'ArrowDown') newDirection = {x: 0, y: boxSize};
-        else if (key === 'ArrowLeft') newDirection = {x: -boxSize, y: 0};
-        else if (key === 'ArrowRight') newDirection = {x: boxSize, y: 0};
-
-        if (newDirection && (newDirection.x !== -direction.x || newDirection.y !== -direction.y)) {
-            nextDirection = newDirection;
-        }
-    });
-
-    gameInterval = setInterval(gameLoop, 150);
+gameInterval = setInterval(gameLoop, 150);
 }
 
 function restartGame() {
@@ -223,4 +223,3 @@ function restartGame() {
 
 // Afficher le tutoriel au démarrage
 showTutorial();
-
