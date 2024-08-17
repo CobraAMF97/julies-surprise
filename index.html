@@ -113,7 +113,14 @@
 <div id="errorMessage">Cette page ne peut être ouverte que sur un appareil mobile.</div>
 <button id="renarverButton" onclick="restartGame()">Renarver</button>
 
-<script src="script.js?v=1.0.8" defer></script>
+<script>
+    function sendVictoryMessage() {
+        window.parent.postMessage('victoryAchieved', '*');
+    }
+</script>
+
+<script src="script.js?v=1.0.9" defer></script>
 
 </body>
 </html>
+
