@@ -1,4 +1,18 @@
+function isMobileDevice() {
+    return /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
+}
+
+function showTutorial() {
+    const tutorialText = document.getElementById('tutorialText');
+    if (isMobileDevice()) {
+        tutorialText.innerHTML = 'Utilisez le glissement du doigt pour diriger le serpent. Évitez les obstacles et mangez la nourriture pour grandir.';
+    } else {
+        tutorialText.innerHTML = 'Utilisez les flèches directionnelles pour diriger le serpent. Évitez les obstacles et mangez la nourriture pour grandir.';
+    }
+}
+
 function startGame() {
+    document.getElementById('tutorial').style.display = 'none';
     document.getElementById('renarverButton').style.display = 'none';
     document.body.classList.remove('game-over');
 
@@ -202,4 +216,5 @@ function restartGame() {
     startGame();
 }
 
-startGame();
+// Afficher le tutoriel au démarrage
+showTutorial();
