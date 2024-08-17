@@ -19,87 +19,27 @@ function startGame() {
     canvas.width = boxSize * 15;
     canvas.height = boxSize * 15;
 
-    // Charger les images
-    const snakeHeadUpImg = new Image();
-    snakeHeadUpImg.src = 'images/snake_head_up.png?v=1.0.4';
-    snakeHeadUpImg.onload = function() {
-        console.log('snakeHeadUpImg loaded');
-    };
-
-    const snakeHeadDownImg = new Image();
-    snakeHeadDownImg.src = 'images/snake_head_down.png?v=1.0.4';
-    snakeHeadDownImg.onload = function() {
-        console.log('snakeHeadDownImg loaded');
-    };
-
-    const snakeHeadLeftImg = new Image();
-    snakeHeadLeftImg.src = 'images/snake_head_left.png?v=1.0.4';
-    snakeHeadLeftImg.onload = function() {
-        console.log('snakeHeadLeftImg loaded');
-    };
-
-    const snakeHeadRightImg = new Image();
-    snakeHeadRightImg.src = 'images/snake_head_right.png?v=1.0.4';
-    snakeHeadRightImg.onload = function() {
-        console.log('snakeHeadRightImg loaded');
-    };
-
-    const snakeBodyImg = new Image();
-    snakeBodyImg.src = 'images/snake_body.png?v=1.0.4';
-    snakeBodyImg.onload = function() {
-        console.log('snakeBodyImg loaded');
-    };
-
-    const snakeTailImg = new Image();
-    snakeTailImg.src = 'images/snake_tail.png?v=1.0.4';
-    snakeTailImg.onload = function() {
-        console.log('snakeTailImg loaded');
-    };
-
-    const foodImg = new Image();
-    foodImg.src = 'images/apple.png?v=1.0.4';
-    foodImg.onload = function() {
-        console.log('foodImg loaded');
-    };
-
-    const obstacleImg = new Image();
-    obstacleImg.src = 'images/rock.png?v=1.0.4';
-    obstacleImg.onload = function() {
-        console.log('obstacleImg loaded');
-    };
-
-    function drawSquare(x, y, img) {
-        if (img.complete) {
-            ctx.drawImage(img, x, y, boxSize, boxSize);
-        } else {
-            ctx.fillStyle = 'green'; // Fallback color
-            ctx.fillRect(x, y, boxSize, boxSize);
-        }
-    }
-
-    function getSnakeHeadImage() {
-        if (direction.x === boxSize && direction.y === 0) return snakeHeadRightImg;
-        if (direction.x === -boxSize && direction.y === 0) return snakeHeadLeftImg;
-        if (direction.x === 0 && direction.y === -boxSize) return snakeHeadUpImg;
-        if (direction.x === 0 && direction.y === boxSize) return snakeHeadDownImg;
+    function drawSquare(x, y, color) {
+        ctx.fillStyle = color;
+        ctx.fillRect(x, y, boxSize, boxSize);
     }
 
     function drawSnake() {
-        drawSquare(snake[0].x, snake[0].y, getSnakeHeadImage());
-
-        for (let i = 1; i < snake.length - 1; i++) {
-            drawSquare(snake[i].x, snake[i].y, snakeBodyImg);
+        if (headAnimationCounter > 0) {
+            drawSquare(snake[0].x, snake[0].y, 'white');
+            headAnimationCounter--;
+        } else {
+            drawSquare(snake[0].x, snake[0].y, 'white');
         }
-
-        drawSquare(snake[snake.length - 1].x, snake[snake.length - 1].y, snakeTailImg);
+        snake.slice(1).forEach(segment => drawSquare(segment.x, segment.y, 'white'));
     }
 
     function drawFood() {
-        drawSquare(food.x, food.y, foodImg);
+        drawSquare(food.x, food.y, 'green');
     }
 
     function drawObstacles() {
-        obstacles.forEach(obstacle => drawSquare(obstacle.x, obstacle.y, obstacleImg));
+        obstacles.forEach(obstacle => drawSquare(obstacle.x, obstacle.y, 'red'));
     }
 
     function moveSnake() {
