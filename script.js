@@ -101,7 +101,7 @@ function startGame() {
             if (score >= maxScore) {
                 clearInterval(gameInterval);
                 alert("Félicitations, Julie ! Le serpent sait maintenant que tu es digne de connaître le mot de passe. Le voici : CAPDES3ANS. Utilise-le pour découvrir le trésor caché.");
-                window.location.href = "https://b12.io/client/8RnHva1D/site_builder/";
+                window.location.href = "https://soeur.b12sites.com/the-last-goodbye";
             }
         } else {
             snake.pop();
